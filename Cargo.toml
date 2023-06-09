@@ -1,0 +1,35 @@
+[package]
+name = "validators-cli"
+version = "0.1.0"
+authors = ["FroVolod <frol_off@meta.ua>", "frol <frolvlad@gmail.com>", "Near Inc <hello@nearprotocol.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "validators"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.0.18", features = ["derive"] }
+inquire = "0.6"
+strum = { version = "0.24", features = ["derive"] }
+strum_macros = "0.24"
+
+tokio = { version = "1.0", features = [ "rt-multi-thread" ] }
+futures = "0.3"
+
+shell-words = "1.0.0"
+
+
+color-eyre = "0.6"
+
+near-crypto = "0.17.0"
+near-primitives = "0.17.0"
+near-jsonrpc-client = "0.6.0"
+near-jsonrpc-primitives = "0.17.0"
+
+interactive-clap = "0.2.4"
+interactive-clap-derive = "0.2.4"
+
+near-cli-rs = { version = "0.5.1", default-features = false }
