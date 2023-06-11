@@ -1,6 +1,7 @@
 use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 
 mod block_id;
+// mod epoch_id;
 mod latest;
 
 #[derive(Debug, Clone, interactive_clap::InteractiveClap)]
@@ -18,11 +19,10 @@ pub enum EpochCommand {
     #[strum_discriminants(strum(message = "latest     -   View latest validators"))]
     /// View latest validators
     Latest(self::latest::Latest),
-    // #[strum_discriminants(strum(
-    //     message = "View validators by EpochId"
-    // ))]
-    // EpochId(self::view_command::ViewQueryRequest),
-    #[strum_discriminants(strum(message = "block_id   -   View validators by BlockId"))]
+    // #[strum_discriminants(strum(message = "epoch-id   -   View validators by EpochId"))]
+    // /// View validators by EpochId
+    // EpochId(self::epoch_id::EpochId),
+    #[strum_discriminants(strum(message = "block-id   -   View validators by BlockId"))]
     /// View validators by BlockId
     BlockId(self::block_id::BlockId),
 }
