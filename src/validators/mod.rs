@@ -13,16 +13,16 @@ pub struct Validators {
 #[derive(Debug, Clone, EnumDiscriminants, interactive_clap_derive::InteractiveClap)]
 #[strum_discriminants(derive(EnumMessage, EnumIter))]
 #[interactive_clap(context = near_cli_rs::GlobalContext)]
-/// Choose Block ID
+/// Select period to view:
 pub enum EpochCommand {
-    #[strum_discriminants(strum(message = "View latest validators"))]
-    /// Specify latest validators
+    #[strum_discriminants(strum(message = "latest     -   View latest validators"))]
+    /// View latest validators
     Latest(self::latest::Latest),
     // #[strum_discriminants(strum(
     //     message = "View validators by EpochId"
     // ))]
     // EpochId(self::view_command::ViewQueryRequest),
-    #[strum_discriminants(strum(message = "View validators by BlockId"))]
-    /// Specify validators by BlockId
+    #[strum_discriminants(strum(message = "block_id   -   View validators by BlockId"))]
+    /// View validators by BlockId
     BlockId(self::block_id::BlockId),
 }
