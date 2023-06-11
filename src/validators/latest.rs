@@ -18,7 +18,7 @@ impl LatestContext {
         let on_after_getting_network_callback: near_cli_rs::network::OnAfterGettingNetworkCallback =
             std::sync::Arc::new({
                 move |network_config| {
-                    super::display_validators_info(
+                    crate::common::display_validators_info(
                         near_primitives::types::EpochReference::Latest,
                         network_config,
                     )

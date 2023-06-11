@@ -17,7 +17,7 @@ impl BlockIdContext {
     ) -> color_eyre::eyre::Result<Self> {
         let on_after_getting_block_reference_callback: crate::network_view_at_block::OnAfterGettingBlockReferenceCallback = std::sync::Arc::new({
             move |network_config, block_id| {
-                super::display_validators_info(
+                crate::common::display_validators_info(
                     near_primitives::types::EpochReference::BlockId(
                         block_id.clone()
                     ),

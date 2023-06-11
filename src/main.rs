@@ -2,6 +2,7 @@ use interactive_clap::ToCliArgs;
 pub use near_cli_rs::CliResult;
 use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 
+mod common;
 mod network_view_at_block;
 mod validators;
 
