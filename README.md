@@ -19,7 +19,7 @@ TODO: copy output when it will be available
 ### proposals
 Show both new proposals in the current epoch as well as current validators who are implicitly proposing:
 ```txt
-./near-cli validator proposals network testnet`
+./near-cli validator proposals network testnet
 ```
 
 <details><summary><i>The result of this command will be as follows:</i></summary>

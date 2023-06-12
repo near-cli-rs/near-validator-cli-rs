@@ -2,6 +2,11 @@ use interactive_clap::ToCliArgs;
 pub use near_cli_rs::CliResult;
 use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 
+mod common;
+mod network_view_at_block;
+mod proposals;
+mod validators;
+
 /// near-cli is a toolbox for interacting with NEAR protocol
 
 #[derive(Debug, Clone, interactive_clap::InteractiveClap)]
@@ -19,12 +24,12 @@ struct Cmd {
 pub enum Command {
     #[strum_discriminants(strum(message = "validators   -   Lookup validators for given epoch"))]
     /// Lookup validators for given epoch
-    Validators,
+    Validators(self::validators::Validators),
     #[strum_discriminants(strum(
-        message = "socialdb     -   Show both new proposals in the current epoch as well as current validators who are implicitly proposing"
+        message = "proposals    -   Show both new proposals in the current epoch as well as current validators who are implicitly proposing"
     ))]
     /// Show both new proposals in the current epoch as well as current validators who are implicitly proposing
-    Proposals,
+    Proposals(self::proposals::Proposals),
 }
 
 fn main() -> CliResult {
