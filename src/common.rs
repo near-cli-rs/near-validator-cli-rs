@@ -3,13 +3,12 @@ use near_jsonrpc_client::methods::{
     validators::RpcValidatorRequest,
     EXPERIMENTAL_genesis_config::{RpcGenesisConfigRequest, RpcGenesisConfigResponse},
 };
-use near_primitives::{borsh::BorshDeserialize, views::EpochValidatorInfo};
+use near_primitives::views::EpochValidatorInfo;
 
 fn validators_info(
     epoch: near_primitives::types::EpochReference,
     network_config: &near_cli_rs::config::NetworkConfig,
 ) -> (RpcGenesisConfigResponse, EpochValidatorInfo) {
-    // let client = near_jsonrpc_client::JsonRpcClient::connect(network_config.rpc_url.as_str());
     let client = network_config.json_rpc_client();
     let genesis_config = client.blocking_call(RpcGenesisConfigRequest).unwrap();
     let validator_info = client
@@ -35,7 +34,9 @@ pub fn display_validators_info(
     Ok(())
 }
 
-fn display_proposals_info(network_config: &near_cli_rs::config::NetworkConfig) -> crate::CliResult {
+pub fn display_proposals_info(
+    network_config: &near_cli_rs::config::NetworkConfig,
+) -> crate::CliResult {
     let (genesis_config, validator_info) = validators_info(
         near_primitives::types::EpochReference::Latest,
         network_config,

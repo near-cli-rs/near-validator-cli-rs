@@ -1,0 +1,31 @@
+#[derive(Debug, Clone, interactive_clap::InteractiveClap)]
+#[interactive_clap(input_context = near_cli_rs::GlobalContext)]
+#[interactive_clap(output_context = ProposalsContext)]
+pub struct Proposals {
+    #[interactive_clap(named_arg)]
+    /// Select network
+    network_config: near_cli_rs::network::Network,
+}
+
+#[derive(Clone)]
+pub struct ProposalsContext(near_cli_rs::network::NetworkContext);
+
+impl ProposalsContext {
+    pub fn from_previous_context(
+        previous_context: near_cli_rs::GlobalContext,
+        _scope: &<Proposals as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
+    ) -> color_eyre::eyre::Result<Self> {
+        let on_after_getting_network_callback: near_cli_rs::network::OnAfterGettingNetworkCallback =
+            std::sync::Arc::new(crate::common::display_proposals_info);
+        Ok(Self(near_cli_rs::network::NetworkContext {
+            config: previous_context.config,
+            on_after_getting_network_callback,
+        }))
+    }
+}
+
+impl From<ProposalsContext> for near_cli_rs::network::NetworkContext {
+    fn from(item: ProposalsContext) -> Self {
+        item.0
+    }
+}

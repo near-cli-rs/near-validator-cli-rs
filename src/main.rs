@@ -4,6 +4,7 @@ use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 
 mod common;
 mod network_view_at_block;
+mod proposals;
 mod validators;
 
 /// near-cli is a toolbox for interacting with NEAR protocol
@@ -28,7 +29,7 @@ pub enum Command {
         message = "proposals    -   Show both new proposals in the current epoch as well as current validators who are implicitly proposing"
     ))]
     /// Show both new proposals in the current epoch as well as current validators who are implicitly proposing
-    Proposals,
+    Proposals(self::proposals::Proposals),
 }
 
 fn main() -> CliResult {
