@@ -3,7 +3,6 @@ pub use near_cli_rs::CliResult;
 use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 
 mod common;
-mod network_view_at_block;
 mod proposals;
 mod validators;
 
