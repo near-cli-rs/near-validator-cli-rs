@@ -1,5 +1,5 @@
 [package]
-name = "validators-cli"
+name = "near-validators-cli"
 version = "0.1.0"
 authors = ["FroVolod <frol_off@meta.ua>", "frol <frolvlad@gmail.com>", "Near Inc <hello@nearprotocol.com>"]
 edition = "2021"
@@ -7,7 +7,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "validators"
+name = "near-validators"
 path = "src/main.rs"
 
 [dependencies]
@@ -19,10 +19,15 @@ strum_macros = "0.24"
 tokio = { version = "1.0", features = [ "rt-multi-thread" ] }
 futures = "0.3"
 
-shell-words = "1.0.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.57"
 
+shell-words = "1.0.0"
+prettytable = "0.10.0"
 
 color-eyre = "0.6"
+
+num-rational = "0.3.2"
 
 near-crypto = "0.17.0"
 near-primitives = "0.17.0"
