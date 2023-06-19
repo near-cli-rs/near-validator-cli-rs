@@ -21,7 +21,7 @@ impl NetworkViewAtBlockArgsContext {
         previous_context: near_cli_rs::GlobalContext,
         scope: &<NetworkViewAtBlockArgs as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
     ) -> color_eyre::eyre::Result<Self> {
-        let network_connection = previous_context.config.network_connection.clone();
+        let network_connection = previous_context.config.network_connection;
         let network_config = network_connection
             .get(&scope.network_name)
             .expect("Failed to get network config!")
@@ -41,7 +41,7 @@ impl NetworkViewAtBlockArgs {
 #[derive(Debug, EnumDiscriminants, Clone, interactive_clap::InteractiveClap)]
 #[interactive_clap(context = NetworkViewAtBlockArgsContext)]
 #[strum_discriminants(derive(EnumMessage, EnumIter))]
-/// Сhoose block for view:
+/// Choose block for view:
 pub enum ViewAtBlock {
     #[strum_discriminants(strum(message = "latest            -   View latest validators"))]
     /// View latest validators

@@ -17,7 +17,7 @@ impl AtBlockHeightContext {
         scope: &<AtBlockHeight as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
     ) -> color_eyre::eyre::Result<Self> {
         let epoch_reference = EpochReference::BlockId(BlockId::Height(scope.block_id_height));
-        crate::common::display_validators_info(epoch_reference, &previous_context.network_config)?;
+        super::display_validators_info(epoch_reference, &previous_context.network_config)?;
         Ok(Self)
     }
 }
@@ -39,7 +39,7 @@ impl BlockIdHashContext {
         scope: &<BlockIdHash as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
     ) -> color_eyre::eyre::Result<Self> {
         let epoch_reference = EpochReference::BlockId(BlockId::Hash(scope.block_id_hash.into()));
-        crate::common::display_validators_info(epoch_reference, &previous_context.network_config)?;
+        super::display_validators_info(epoch_reference, &previous_context.network_config)?;
         Ok(Self)
     }
 }

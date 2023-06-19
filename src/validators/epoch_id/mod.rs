@@ -11,7 +11,7 @@ impl LatestContext {
         previous_context: super::network_view_at_block::NetworkViewAtBlockArgsContext,
         _scope: &<Latest as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
     ) -> color_eyre::eyre::Result<Self> {
-        crate::common::display_validators_info(
+        super::display_validators_info(
             near_primitives::types::EpochReference::Latest,
             &previous_context.network_config,
         )?;

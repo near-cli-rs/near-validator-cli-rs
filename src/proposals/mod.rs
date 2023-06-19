@@ -1,3 +1,14 @@
+use color_eyre::eyre::Context;
+use prettytable::Table;
+
+use near_jsonrpc_client::methods::{
+    validators::RpcValidatorRequest, EXPERIMENTAL_genesis_config::RpcGenesisConfigRequest,
+    EXPERIMENTAL_protocol_config::RpcProtocolConfigRequest,
+};
+use near_primitives::types::{BlockReference, EpochReference, Finality};
+
+use near_cli_rs::common::JsonRpcClientExt;
+
 #[derive(Debug, Clone, interactive_clap::InteractiveClap)]
 #[interactive_clap(input_context = near_cli_rs::GlobalContext)]
 #[interactive_clap(output_context = ProposalsContext)]
@@ -16,7 +27,7 @@ impl ProposalsContext {
         _scope: &<Proposals as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
     ) -> color_eyre::eyre::Result<Self> {
         let on_after_getting_network_callback: near_cli_rs::network::OnAfterGettingNetworkCallback =
-            std::sync::Arc::new(crate::common::display_proposals_info);
+            std::sync::Arc::new(display_proposals_info);
         Ok(Self(near_cli_rs::network::NetworkContext {
             config: previous_context.config,
             on_after_getting_network_callback,
@@ -28,4 +39,185 @@ impl From<ProposalsContext> for near_cli_rs::network::NetworkContext {
     fn from(item: ProposalsContext) -> Self {
         item.0
     }
+}
+
+pub fn display_proposals_info(
+    network_config: &near_cli_rs::config::NetworkConfig,
+) -> crate::CliResult {
+    let json_rpc_client = network_config.json_rpc_client();
+
+    let epoch_validator_info = json_rpc_client
+        .blocking_call(&RpcValidatorRequest {
+            epoch_reference: EpochReference::Latest,
+        })
+        .wrap_err("Failed to get epoch validators information request.")?;
+
+    let current_proposals = epoch_validator_info.current_proposals;
+    let current_proposals_stake: std::collections::HashMap<
+        near_primitives::types::AccountId,
+        near_primitives::types::Balance,
+    > = current_proposals
+        .clone()
+        .into_iter()
+        .map(|validator_stake_view| {
+            let validator_stake = validator_stake_view.into_validator_stake();
+            validator_stake.account_and_stake()
+        })
+        .collect();
+
+    let current_validators = epoch_validator_info.current_validators;
+    let current_validators_stake: std::collections::HashMap<
+        near_primitives::types::AccountId,
+        near_primitives::types::Balance,
+    > = current_validators
+        .into_iter()
+        .map(|current_epoch_validator_info| {
+            (
+                current_epoch_validator_info.account_id,
+                current_epoch_validator_info.stake,
+            )
+        })
+        .collect();
+
+    let next_validators = epoch_validator_info.next_validators;
+    let mut next_validators_stake: std::collections::HashMap<
+        near_primitives::types::AccountId,
+        near_primitives::types::Balance,
+    > = next_validators
+        .into_iter()
+        .map(|next_epoch_validator_info| {
+            (
+                next_epoch_validator_info.account_id,
+                next_epoch_validator_info.stake,
+            )
+        })
+        .collect();
+
+    for (account_id, stake) in current_proposals_stake.clone().into_iter() {
+        next_validators_stake.insert(account_id, stake);
+    }
+
+    let mut combine_validators_and_proposals: std::collections::HashMap<
+        near_primitives::types::AccountId,
+        ProposalsTable,
+    > = std::collections::HashMap::new();
+    for (account_id, stake) in next_validators_stake {
+        if let Some(new_stake) = current_proposals_stake.get(&account_id) {
+            let proposals_table = ProposalsTable {
+                account_id: account_id.clone(),
+                status: "Proposal(Accepted)".to_string(),
+                stake,
+                new_stake: Some(*new_stake),
+            };
+            combine_validators_and_proposals.insert(account_id, proposals_table)
+        } else {
+            let proposals_table = ProposalsTable {
+                account_id: account_id.clone(),
+                status: "Rollover".to_string(),
+                stake,
+                new_stake: None,
+            };
+            combine_validators_and_proposals.insert(account_id, proposals_table)
+        };
+    }
+    let mut combine_validators_and_proposals_table: Vec<ProposalsTable> =
+        combine_validators_and_proposals.into_values().collect();
+    combine_validators_and_proposals_table.sort_by(|a, b| b.stake.cmp(&a.stake));
+
+    let genesis_config = json_rpc_client
+        .blocking_call(&RpcGenesisConfigRequest)
+        .wrap_err("Failed to get genesis config.")?;
+
+    let protocol_config = json_rpc_client
+        .blocking_call(&RpcProtocolConfigRequest {
+            block_reference: BlockReference::Finality(Finality::Final),
+        })
+        .wrap_err("Failed to get protocol config.")?;
+
+    let max_number_of_seats = protocol_config.num_block_producer_seats
+        + protocol_config
+            .avg_hidden_validator_seats_per_shard
+            .iter()
+            .sum::<u64>();
+
+    let expected_seat_price = crate::common::find_seat_price(
+        combine_validators_and_proposals_table
+            .iter()
+            .cloned()
+            .map(crate::common::CurrentOrNextValidatorInfoOrProposalsTable::from)
+            .collect(),
+        max_number_of_seats,
+        genesis_config.minimum_stake_ratio,
+        protocol_config.protocol_version,
+    )?;
+
+    let passing_proposals = combine_validators_and_proposals_table
+        .iter()
+        .map(|proposals| match proposals.new_stake {
+            Some(new_stake) => new_stake,
+            None => proposals.stake,
+        })
+        .filter(|stake| stake >= &expected_seat_price.to_yoctonear())
+        .count();
+
+    println!(
+        "Proposals for the epoch after next (new: {}, passing: {}, expected seat price = {})",
+        current_proposals.len(),
+        passing_proposals,
+        expected_seat_price
+    );
+
+    let mut table = Table::new();
+    table.set_titles(prettytable::row![Fg=>"#", "Status", "Validator Id", "Stake", "New Stake"]);
+
+    for (index, proposals) in combine_validators_and_proposals_table
+        .into_iter()
+        .enumerate()
+    {
+        let (new_stake, status) = match proposals.new_stake {
+            Some(new_stake) => {
+                let status = if new_stake <= expected_seat_price.to_yoctonear() {
+                    "Proposal(Declined)".to_string()
+                } else {
+                    proposals.status
+                };
+                (
+                    near_cli_rs::common::NearBalance::from_yoctonear(new_stake).to_string(),
+                    status,
+                )
+            }
+            None => {
+                let status = if proposals.stake <= expected_seat_price.to_yoctonear() {
+                    "Kicked out".to_string()
+                } else {
+                    proposals.status
+                };
+
+                ("".to_string(), status)
+            }
+        };
+        let stake = match current_validators_stake.get(&proposals.account_id) {
+            Some(stake) => near_cli_rs::common::NearBalance::from_yoctonear(*stake).to_string(),
+            None => "".to_string(),
+        };
+
+        table.add_row(prettytable::row![
+            index,
+            status,
+            proposals.account_id,
+            stake,
+            new_stake
+        ]);
+    }
+    table.set_format(*prettytable::format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+    table.printstd();
+    Ok(())
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct ProposalsTable {
+    pub account_id: near_primitives::types::AccountId,
+    pub status: String,
+    pub stake: near_primitives::types::Balance,
+    pub new_stake: Option<near_primitives::types::Balance>,
 }
