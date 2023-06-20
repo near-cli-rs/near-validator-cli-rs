@@ -45,7 +45,7 @@ impl NetworkViewAtBlockArgs {
 pub enum ViewAtBlock {
     #[strum_discriminants(strum(message = "latest            -   View latest validators"))]
     /// View latest validators
-    Now(super::epoch_id::Latest),
+    Now(super::epoch_id::latest::Latest),
     #[strum_discriminants(strum(message = "next              -   View next validators"))]
     /// View next validators
     Next,
