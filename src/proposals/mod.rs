@@ -202,7 +202,7 @@ pub fn display_proposals_info(
         };
 
         table.add_row(prettytable::row![
-            index,
+            Fg->index + 1,
             status,
             proposals.account_id,
             stake,

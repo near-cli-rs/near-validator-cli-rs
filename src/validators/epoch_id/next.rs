@@ -23,7 +23,6 @@ impl NextContext {
         _scope: &<Next as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
     ) -> color_eyre::eyre::Result<Self> {
         display_next_validators_info(
-            near_primitives::types::EpochReference::Latest,
             &previous_context.network_config,
         )?;
         Ok(Self)
@@ -31,33 +30,41 @@ impl NextContext {
 }
 
 fn display_next_validators_info(
-    epoch_reference: near_primitives::types::EpochReference,
     network_config: &near_cli_rs::config::NetworkConfig,
 ) -> crate::CliResult {
-    let block_reference = match &epoch_reference {
-        EpochReference::Latest => BlockReference::Finality(Finality::Final),
-        EpochReference::BlockId(block_id) => BlockReference::BlockId(block_id.clone()),
-        _ => {
-            return Err(color_eyre::eyre::ErrReport::msg(
-                "BlockReference: incorrect value entered",
-            ))
-        }
-    };
-
     let json_rpc_client = network_config.json_rpc_client();
 
-    let mut current_validators = json_rpc_client
-        .blocking_call(&RpcValidatorRequest { epoch_reference })
-        .wrap_err("Failed to get epoch validators information request.")?
-        .current_validators;
-    current_validators.sort_by(|a, b| b.stake.cmp(&a.stake));
+    let epoch_validator_info = json_rpc_client
+        .blocking_call(&RpcValidatorRequest {
+            epoch_reference: EpochReference::Latest,
+        })
+        .wrap_err("Failed to get epoch validators information request.")?;
+
+    let current_validators = epoch_validator_info.current_validators;
+    let mut current_validators_stake: std::collections::HashMap<
+        near_primitives::types::AccountId,
+        near_primitives::types::Balance,
+    > = current_validators
+        .into_iter()
+        .map(|current_epoch_validator_info| {
+            (
+                current_epoch_validator_info.account_id,
+                current_epoch_validator_info.stake,
+            )
+        })
+        .collect();
+
+    let mut next_validators = epoch_validator_info.next_validators;
+    next_validators.sort_by(|a, b| b.stake.cmp(&a.stake));
 
     let genesis_config = json_rpc_client
         .blocking_call(&RpcGenesisConfigRequest)
         .wrap_err("Failed to get genesis config.")?;
 
     let protocol_config = json_rpc_client
-        .blocking_call(&RpcProtocolConfigRequest { block_reference })
+        .blocking_call(&RpcProtocolConfigRequest {
+            block_reference: BlockReference::Finality(Finality::Final),
+        })
         .wrap_err("Failed to get protocol config.")?;
 
     let max_number_of_seats = protocol_config.num_block_producer_seats
@@ -65,44 +72,52 @@ fn display_next_validators_info(
             .avg_hidden_validator_seats_per_shard
             .iter()
             .sum::<u64>();
+    let seat_price = crate::common::find_seat_price(
+        next_validators
+            .iter()
+            .cloned()
+            .map(crate::common::CurrentOrNextValidatorInfoOrProposalsTable::from)
+            .collect(),
+        max_number_of_seats,
+        genesis_config.minimum_stake_ratio,
+        protocol_config.protocol_version,
+    )?;
     println!(
-        "Validators (total: {}, seat price: {}",
-        current_validators.len(),
-        crate::common::find_seat_price(
-            current_validators
-                .iter()
-                .cloned()
-                .map(crate::common::CurrentOrNextValidatorInfoOrProposalsTable::from)
-                .collect(),
-            max_number_of_seats,
-            genesis_config.minimum_stake_ratio,
-            protocol_config.protocol_version
-        )?
+        "Next validators (total: {}, seat price: {}):",
+        next_validators.len(),
+        seat_price
     );
 
     let mut table = Table::new();
-    table.set_titles(prettytable::row![Fg=>"Validator Id", "Stake", "Online", "Blocks produced", "Blocks expected", "Chunks produced", "Chunks expected"]);
+    table.set_titles(
+        prettytable::row![Fg=>"#", "Status", "Validator Id", "Previous Stake", "Stake"],
+    );
 
-    for validator in &current_validators {
-        let online = if validator.num_expected_blocks + validator.num_expected_chunks == 0 {
-            "NaN".to_string()
-        } else {
-            format!(
-                "{:>6.2} %",
-                ((validator.num_produced_blocks + validator.num_produced_chunks) * 100) as f64
-                    / (validator.num_expected_blocks + validator.num_expected_chunks) as f64
-            )
+    for (index, validator) in next_validators.into_iter().enumerate() {
+        let mut previous_stake = "".to_string();
+        let mut status = "New".to_string();
+        if let Some(stake) = current_validators_stake.remove(&validator.account_id) {
+            previous_stake = near_cli_rs::common::NearBalance::from_yoctonear(stake).to_string();
+            status = "Rewarded".to_string();
         };
         table.add_row(prettytable::row![
+            Fg->index + 1,
+            status,
             validator.account_id,
+            previous_stake,
             near_cli_rs::common::NearBalance::from_yoctonear(validator.stake),
-            online,
-            validator.num_produced_blocks,
-            validator.num_expected_blocks,
-            validator.num_produced_chunks,
-            validator.num_expected_chunks
         ]);
     }
+    for (account_id, previous_stake) in current_validators_stake {
+        table.add_row(prettytable::row![
+            "",
+            "Kicked out",
+            account_id,
+            near_cli_rs::common::NearBalance::from_yoctonear(previous_stake),
+            ""
+        ]);
+    }
+
     table.set_format(*prettytable::format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
     table.printstd();
     Ok(())
