@@ -48,7 +48,7 @@ pub enum ViewAtBlock {
     Now(super::epoch_id::latest::Latest),
     #[strum_discriminants(strum(message = "next              -   View next validators"))]
     /// View next validators
-    Next,
+    Next(super::epoch_id::next::Next),
     #[strum_discriminants(strum(
         message = "at-block-height   - View validators in a height-selected block"
     ))]
