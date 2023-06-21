@@ -60,6 +60,8 @@ fn find_seat_price_for_protocol_before_49(
     Ok(near_cli_rs::common::NearBalance::from_yoctonear(left))
 }
 
+/// This implementation is ported from near-api-js:
+/// https://github.com/near/near-api-js/blob/bdbf839f54fbc399d7299da8cf9966bbdc426238/packages/utils/src/validators.ts#L52-L64
 fn find_seat_price_for_protocol_after_49(
     validators: Vec<CurrentOrNextValidatorInfoOrProposalsTable>,
     max_number_of_seats: u64,
