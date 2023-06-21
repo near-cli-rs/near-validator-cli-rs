@@ -36,7 +36,7 @@ fn find_seat_price_for_protocol_before_49(
         })
         .collect::<Vec<_>>();
     let stakes_sum: u128 = stakes.iter().sum();
-    if stakes_sum < num_seats as u128 {
+    if stakes_sum < num_seats.into() {
         return Err(color_eyre::eyre::Report::msg("Stakes are below seats"));
     }
     let mut left: u128 = 1;
