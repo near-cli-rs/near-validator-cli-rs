@@ -1,6 +1,8 @@
 use color_eyre::eyre::ContextCompat;
 use num_rational::Rational32;
 
+/// This implementation is ported from near-api-js:
+/// https://github.com/near/near-api-js/blob/bdbf839f54fbc399d7299da8cf9966bbdc426238/packages/utils/src/validators.ts#L12-L22
 pub fn find_seat_price(
     stakes: Vec<u128>,
     max_number_of_seats: u64,
