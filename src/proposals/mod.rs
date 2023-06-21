@@ -143,8 +143,7 @@ pub fn display_proposals_info(
     let expected_seat_price = crate::common::find_seat_price(
         combine_validators_and_proposals_table
             .iter()
-            .cloned()
-            .map(crate::common::CurrentOrNextValidatorInfoOrProposalsTable::from)
+            .map(|proposal| proposal.stake)
             .collect(),
         max_number_of_seats,
         genesis_config.minimum_stake_ratio,

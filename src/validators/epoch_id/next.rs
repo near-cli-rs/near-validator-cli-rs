@@ -22,9 +22,7 @@ impl NextContext {
         previous_context: crate::validators::network_view_at_block::NetworkViewAtBlockArgsContext,
         _scope: &<Next as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
     ) -> color_eyre::eyre::Result<Self> {
-        display_next_validators_info(
-            &previous_context.network_config,
-        )?;
+        display_next_validators_info(&previous_context.network_config)?;
         Ok(Self)
     }
 }
@@ -75,8 +73,7 @@ fn display_next_validators_info(
     let seat_price = crate::common::find_seat_price(
         next_validators
             .iter()
-            .cloned()
-            .map(crate::common::CurrentOrNextValidatorInfoOrProposalsTable::from)
+            .map(|next_validator| next_validator.stake)
             .collect(),
         max_number_of_seats,
         genesis_config.minimum_stake_ratio,

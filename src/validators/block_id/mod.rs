@@ -26,10 +26,7 @@ impl AtBlockHeightContext {
         scope: &<AtBlockHeight as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
     ) -> color_eyre::eyre::Result<Self> {
         let epoch_reference = EpochReference::BlockId(BlockId::Height(scope.block_height));
-        display_current_validators_info(
-            epoch_reference,
-            &previous_context.network_config,
-        )?;
+        display_current_validators_info(epoch_reference, &previous_context.network_config)?;
         Ok(Self)
     }
 }
@@ -97,8 +94,7 @@ pub fn display_current_validators_info(
         crate::common::find_seat_price(
             current_validators
                 .iter()
-                .cloned()
-                .map(crate::common::CurrentOrNextValidatorInfoOrProposalsTable::from)
+                .map(|current_validator| current_validator.stake)
                 .collect(),
             max_number_of_seats,
             genesis_config.minimum_stake_ratio,
