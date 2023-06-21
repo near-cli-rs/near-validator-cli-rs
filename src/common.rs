@@ -15,10 +15,12 @@ pub fn find_seat_price(
     find_seat_price_for_protocol_after_49(
         validators,
         max_number_of_seats,
-        vec![*minimum_stake_ratio.numer(), *minimum_stake_ratio.denom()],
+        minimum_stake_ratio,
     )
 }
 
+/// This implementation is ported from near-api-js:
+/// https://github.com/near/near-api-js/blob/bdbf839f54fbc399d7299da8cf9966bbdc426238/packages/utils/src/validators.ts#L24-L50
 fn find_seat_price_for_protocol_before_49(
     validators: Vec<CurrentOrNextValidatorInfoOrProposalsTable>,
     num_seats: u64,
@@ -65,13 +67,8 @@ fn find_seat_price_for_protocol_before_49(
 fn find_seat_price_for_protocol_after_49(
     validators: Vec<CurrentOrNextValidatorInfoOrProposalsTable>,
     max_number_of_seats: u64,
-    minimum_stake_ratio: Vec<i32>,
+    minimum_stake_ratio: Rational32,
 ) -> color_eyre::eyre::Result<near_cli_rs::common::NearBalance> {
-    if minimum_stake_ratio.len() != 2 {
-        return Err(color_eyre::eyre::Report::msg(
-            "Error: minimumStakeRatio should have 2 elements",
-        ));
-    }
     let mut stakes = validators
         .iter()
         .map(|validator_info| match validator_info {
@@ -92,9 +89,9 @@ fn find_seat_price_for_protocol_after_49(
     if validators.len() < max_number_of_seats as usize {
         return Ok(near_cli_rs::common::NearBalance::from_yoctonear(
             stakes_sum
-                .checked_mul(minimum_stake_ratio[0] as u128)
+                .checked_mul(*minimum_stake_ratio.numer() as u128)
                 .wrap_err("Can't multiply these numbers")?
-                .checked_div(minimum_stake_ratio[1] as u128)
+                .checked_div(*minimum_stake_ratio.denom() as u128)
                 .wrap_err("Can't divide these numbers")?,
         ));
     };
