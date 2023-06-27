@@ -1899,6 +1899,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6540152fba5e96fe5d575b79e8cd244cf2add747bb01362426bdc069bc3a23bc"
 
 [[package]]
+name = "near-validators-cli"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "color-eyre",
+ "futures",
+ "inquire",
+ "interactive-clap",
+ "interactive-clap-derive",
+ "near-cli-rs",
+ "near-crypto",
+ "near-jsonrpc-client",
+ "near-jsonrpc-primitives",
+ "near-primitives",
+ "num-rational",
+ "prettytable",
+ "serde",
+ "serde_json",
+ "shell-words",
+ "strum",
+ "strum_macros",
+ "tokio",
+]
+
+[[package]]
 name = "near-vm-errors"
 version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3481,27 +3506,6 @@ name = "utf8parse"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
-
-[[package]]
-name = "validators-cli"
-version = "0.1.0"
-dependencies = [
- "clap",
- "color-eyre",
- "futures",
- "inquire",
- "interactive-clap",
- "interactive-clap-derive",
- "near-cli-rs",
- "near-crypto",
- "near-jsonrpc-client",
- "near-jsonrpc-primitives",
- "near-primitives",
- "shell-words",
- "strum",
- "strum_macros",
- "tokio",
-]
 
 [[package]]
 name = "valuable"
