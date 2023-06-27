@@ -58,5 +58,5 @@ pub enum ViewAtBlock {
         message = "at-block-hash     - View validators in a hash-selected block"
     ))]
     /// View validators in a hash-selected block
-    AtBlockHash(super::block_id::BlockIdHash),
+    AtBlockHash(super::block_id::AtBlockHash),
 }

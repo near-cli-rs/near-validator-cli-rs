@@ -13,7 +13,7 @@ use near_cli_rs::common::JsonRpcClientExt;
 #[interactive_clap(input_context = super::network_view_at_block::NetworkViewAtBlockArgsContext)]
 #[interactive_clap(output_context = AtBlockHeightContext)]
 pub struct AtBlockHeight {
-    /// Type the block ID height:
+    /// Type the block height:
     block_height: near_primitives::types::BlockHeight,
 }
 
@@ -33,19 +33,19 @@ impl AtBlockHeightContext {
 
 #[derive(Debug, Clone, interactive_clap::InteractiveClap)]
 #[interactive_clap(input_context = super::network_view_at_block::NetworkViewAtBlockArgsContext)]
-#[interactive_clap(output_context = BlockIdHashContext)]
-pub struct BlockIdHash {
-    /// Type the block ID hash:
+#[interactive_clap(output_context = AtBlockHashContext)]
+pub struct AtBlockHash {
+    /// Type the block hash:
     block_hash: near_cli_rs::types::crypto_hash::CryptoHash,
 }
 
 #[derive(Debug, Clone)]
-pub struct BlockIdHashContext;
+pub struct AtBlockHashContext;
 
-impl BlockIdHashContext {
+impl AtBlockHashContext {
     pub fn from_previous_context(
         previous_context: super::network_view_at_block::NetworkViewAtBlockArgsContext,
-        scope: &<BlockIdHash as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
+        scope: &<AtBlockHash as interactive_clap::ToInteractiveClapContextScope>::InteractiveClapContextScope,
     ) -> color_eyre::eyre::Result<Self> {
         let epoch_reference = EpochReference::BlockId(BlockId::Hash(scope.block_hash.into()));
         display_current_validators_info(epoch_reference, &previous_context.network_config)?;

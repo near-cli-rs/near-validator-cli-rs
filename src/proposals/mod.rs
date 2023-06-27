@@ -93,9 +93,7 @@ pub fn display_proposals_info(
         })
         .collect();
 
-    for (account_id, stake) in current_proposals_stake.clone().into_iter() {
-        next_validators_stake.insert(account_id, stake);
-    }
+    next_validators_stake.extend(current_proposals_stake.clone());
 
     let mut combine_validators_and_proposals: std::collections::HashMap<
         near_primitives::types::AccountId,
