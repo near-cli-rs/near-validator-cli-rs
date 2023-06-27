@@ -89,7 +89,7 @@ pub fn display_current_validators_info(
             .iter()
             .sum::<u64>();
     println!(
-        "Validators (total: {}, seat price: {}",
+        "Validators (total: {}, seat price: {})",
         current_validators.len(),
         crate::common::find_seat_price(
             current_validators
