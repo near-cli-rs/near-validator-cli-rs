@@ -1899,7 +1899,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6540152fba5e96fe5d575b79e8cd244cf2add747bb01362426bdc069bc3a23bc"
 
 [[package]]
-name = "near-validators-cli"
+name = "near-validator-cli"
 version = "0.1.0"
 dependencies = [
  "clap",

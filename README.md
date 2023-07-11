@@ -6,7 +6,7 @@
 With this command you can lookup validators for a given epoch. Epoch can be specifyed by EpochId, BlockId, Block hight or `Latest` keyword.
 In the terminal command line type:
 ```txt
-./near-validators validators network-config testnet now
+./near-validator validators network-config testnet now
 ```
 
 <details><summary><i>The result of this command will be as follows:</i></summary>
@@ -113,7 +113,7 @@ Validators (total: 90, seat price: 53085.036224843075206029910443 NEAR)
 ### proposals
 Show both new proposals in the current epoch as well as current validators who are implicitly proposing:
 ```txt
-./near-validators proposals network-config testnet
+./near-validator proposals network-config testnet
 ```
 
 <details><summary><i>The result of this command will be as follows:</i></summary>

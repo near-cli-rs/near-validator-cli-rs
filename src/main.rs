@@ -55,7 +55,7 @@ fn main() -> CliResult {
             | interactive_clap::ResultFromCli::Cancel(Some(cli_cmd)) => {
                 println!(
                     "Your console command:\n{} {}",
-                    std::env::args().next().as_deref().unwrap_or("./validators"),
+                    std::env::args().next().as_deref().unwrap_or("./validator"),
                     shell_words::join(cli_cmd.to_cli_args())
                 );
                 return Ok(());
