@@ -1,4 +1,4 @@
-use color_eyre::eyre::{ContextCompat, Context};
+use color_eyre::eyre::{Context, ContextCompat};
 use num_rational::Rational32;
 
 /// This implementation is ported from near-api-js:
@@ -54,12 +54,21 @@ fn find_seat_price_for_protocol_after_49(
     minimum_stake_ratio: Rational32,
 ) -> color_eyre::eyre::Result<near_cli_rs::common::NearBalance> {
     let stakes_sum: u128 = stakes.iter().sum();
-    if u64::try_from(stakes.len()).wrap_err("stakes.len() must fit in u64.")? < max_number_of_seats {
+    if u64::try_from(stakes.len()).wrap_err("stakes.len() must fit in u64.")? < max_number_of_seats
+    {
         return Ok(near_cli_rs::common::NearBalance::from_yoctonear(
             stakes_sum
-                .checked_mul((*minimum_stake_ratio.numer()).try_into().wrap_err("minimum_stake_ratio.numer must be positive.")?)
+                .checked_mul(
+                    (*minimum_stake_ratio.numer())
+                        .try_into()
+                        .wrap_err("minimum_stake_ratio.numer must be positive.")?,
+                )
                 .wrap_err("Can't multiply these numbers")?
-                .checked_div((*minimum_stake_ratio.denom()).try_into().wrap_err("minimum_stake_ratio.denom must be positive.")?)
+                .checked_div(
+                    (*minimum_stake_ratio.denom())
+                        .try_into()
+                        .wrap_err("minimum_stake_ratio.denom must be positive.")?,
+                )
                 .wrap_err("Can't divide these numbers")?,
         ));
     };
