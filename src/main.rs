@@ -4,6 +4,7 @@ use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 
 mod common;
 mod proposals;
+mod staking;
 mod validators;
 
 /// near-cli is a toolbox for interacting with NEAR protocol
@@ -29,6 +30,11 @@ pub enum Command {
     ))]
     /// Show both new proposals in the current epoch as well as current validators who are implicitly proposing
     Proposals(self::proposals::Proposals),
+    #[strum_discriminants(strum(
+        message = "staking      -   Staking management (proposal, current, historical)"
+    ))]
+    /// Staking management (proposal, current, historical)
+    Staking(self::staking::Staking),
 }
 
 fn main() -> CliResult {
