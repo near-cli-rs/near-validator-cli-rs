@@ -35,20 +35,23 @@ impl UnstakeProposalContext {
 impl From<UnstakeProposalContext> for near_cli_rs::commands::ActionContext {
     fn from(item: UnstakeProposalContext) -> Self {
         let on_after_getting_network_callback: near_cli_rs::commands::OnAfterGettingNetworkCallback =
-            std::sync::Arc::new(move |_network_config| {
+            {
+                let validator = item.validator.clone();
+                std::sync::Arc::new(move |_network_config| {
                 Ok(near_cli_rs::commands::PrepopulatedTransaction {
-                    signer_id: item.validator.clone(),
-                    receiver_id: item.validator.clone(),
+                    signer_id: validator.clone(),
+                    receiver_id: validator.clone(),
                     actions: vec![near_primitives::transaction::Action::Stake(
                         near_primitives::transaction::StakeAction {
-                            stake: near_cli_rs::common::NearBalance::from_yoctonear(0).to_yoctonear(),
+                            stake: 0,
                             public_key: item.public_key.clone(),
                         },
                     )],
                 })
-            });
+            })};
         Self {
             global_context: item.global_context,
+            interacting_with_account_ids: vec![item.validator],
             on_after_getting_network_callback,
             on_before_signing_callback: std::sync::Arc::new(
                 |_prepolulated_unsinged_transaction, _network_config| Ok(()),

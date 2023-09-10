@@ -34,7 +34,7 @@ impl NetworkViewAtBlockArgs {
     fn input_network_name(
         context: &near_cli_rs::GlobalContext,
     ) -> color_eyre::eyre::Result<Option<String>> {
-        near_cli_rs::common::input_network_name(&context.config)
+        near_cli_rs::common::input_network_name(&context.config, &[])
     }
 }
 
