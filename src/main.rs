@@ -31,9 +31,9 @@ pub enum Command {
     /// Show both new proposals in the current epoch as well as current validators who are implicitly proposing
     Proposals(self::proposals::Proposals),
     #[strum_discriminants(strum(
-        message = "staking      -   Staking management (proposal, current, historical)"
+        message = "staking      -   For validators, there is an option to staking without deploying a staking pool smart contract (stake, unstake, view stake)"
     ))]
-    /// Staking management (proposal, current, historical)
+    /// For validators, there is an option to staking without deploying a staking pool smart contract (stake, unstake, view stake)
     Staking(self::staking::Staking),
 }
 
