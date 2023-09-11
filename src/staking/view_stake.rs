@@ -37,7 +37,7 @@ impl ViewStakeContext {
                         )
                     })?;
                 let account_view = rpc_query_response.account_view()?;
-                println!("Validator {validator_account_id} staked amount {}",
+                eprintln!("Validator {validator_account_id} staked amount {}",
                     near_cli_rs::common::NearBalance::from_yoctonear(account_view.locked)
                 );
 

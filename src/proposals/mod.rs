@@ -158,7 +158,7 @@ pub fn display_proposals_info(
         .filter(|stake| stake >= &expected_seat_price.to_yoctonear())
         .count();
 
-    println!(
+    eprintln!(
         "Proposals for the epoch after next (new: {}, passing: {}, expected seat price = {})",
         current_proposals.len(),
         passing_proposals,

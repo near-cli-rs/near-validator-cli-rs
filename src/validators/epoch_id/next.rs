@@ -79,7 +79,7 @@ fn display_next_validators_info(
         genesis_config.minimum_stake_ratio,
         protocol_config.protocol_version,
     )?;
-    println!(
+    eprintln!(
         "Next validators (total: {}, seat price: {}):",
         next_validators.len(),
         seat_price
