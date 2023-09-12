@@ -1,8 +1,14 @@
 # Validator extesnion
 
+*near-validator* is your **human-friendly** companion that helps to interact with [NEAR Validators](https://pages.near.org/papers/economics-in-sharded-blockchain/#validators) from command line.
+
+<p>
+  <img src="docs/media/example.svg" alt="" width="1200">
+</p>
+
 ## Available commands:
 
-### list
+### validators
 With this command you can lookup validators for a given epoch. Epoch can be specifyed by EpochId, BlockId, Block hight or `Latest` keyword.
 In the terminal command line type:
 ```txt
@@ -215,3 +221,64 @@ Proposals for the epoch after next (new: 25, passing: 62, expected seat price = 
 +----+--------------------+-------------------------------------------+----------------------------------------+----------------------------------------+
 ```
 </details>
+
+### staking
+For validators, there is an option to staking without deploying a staking pool smart contract.
+- [view-stake](#view-stake---View-validator-stake)
+- [stake-proposal](#stake-proposal---To-stake-NEAR-directly-without-a-staking-pool)
+- [unstake-proposal](#unstake-proposal---To-unstake-NEAR-directly-without-a-staking-pool)
+
+#### view-stake - View validator stake
+
+To view the validator's stake on the last block, you need to enter in the terminal command line:
+
+```txt
+./near-validator staking view-stake volodymyr.testnet network-config testnet now
+```
+
+<details><summary><i>The result of this command will be as follows:</i></summary>
+
+```txt
+Validator volodymyr.testnet staked amount 0 NEAR
+```
+</details>
+
+#### stake-proposal - To stake NEAR directly without a staking pool
+
+To stake the amount you must enter in the terminal command line:
+
+```txt
+./near-validator staking stake-proposal volodymyr.testnet ed25519:AiEo5xepXjY7ChihZJ6AsfoDAaUowhPgvQp997qnFuRP '1500 NEAR' network-config testnet sign-with-keychain send
+```
+
+<details><summary><i>The result of this command will be as follows:</i></summary>
+
+```txt
+Validator <volodymyr.testnet> has successfully staked 1500 NEAR.
+```
+</details>
+
+#### unstake-proposal - To unstake NEAR directly without a staking pool
+
+To unstake you must enter in the terminal command line:
+
+```txt
+./near-validator staking unstake-proposal volodymyr.testnet ed25519:AiEo5xepXjY7ChihZJ6AsfoDAaUowhPgvQp997qnFuRP network-config testnet sign-with-keychain send
+```
+
+<details><summary><i>The result of this command will be as follows:</i></summary>
+
+```txt
+Validator <volodymyr.testnet> successfully unstaked.
+```
+</details>
+
+## Install
+
+### From Source
+
+With Rust's package manager cargo, you can install `near-validator` via:
+
+```
+cargo install --git https://github.com/near-cli-rs/near-validator-cli-rs
+```
