@@ -38,7 +38,7 @@ near-primitives = "0.17.0"
 near-jsonrpc-client = "0.6.0"
 near-jsonrpc-primitives = "0.17.0"
 
-interactive-clap = "0.2.4"
-interactive-clap-derive = "0.2.4"
+interactive-clap = "0.2.7"
+interactive-clap-derive = "0.2.7"
 
-near-cli-rs = { git = "https://github.com/near/near-cli-rs", rev = "d461b41b090890fe4c6d48006b7c59f2d01fbb34", default-features = false }
+near-cli-rs = { version = "0.6.2", default-features = false }
