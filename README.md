@@ -1,4 +1,4 @@
-# Validator extesnion
+# NEAR Validator CLI Extension
 
 *near-validator* is your **human-friendly** companion that helps to interact with [NEAR Validators](https://pages.near.org/papers/economics-in-sharded-blockchain/#validators) from command line.
 
