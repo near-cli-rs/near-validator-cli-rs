@@ -1,7 +1,11 @@
 [package]
 name = "near-validator-cli"
 version = "0.1.0"
-authors = ["FroVolod <frol_off@meta.ua>", "frol <frolvlad@gmail.com>", "Near Inc <hello@nearprotocol.com>"]
+authors = [
+    "FroVolod <frol_off@meta.ua>",
+    "frol <frolvlad@gmail.com>",
+    "Near Inc <hello@nearprotocol.com>",
+]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -16,7 +20,7 @@ inquire = "0.6"
 strum = { version = "0.24", features = ["derive"] }
 strum_macros = "0.24"
 
-tokio = { version = "1.0", features = [ "rt-multi-thread" ] }
+tokio = { version = "1.0", features = ["rt-multi-thread"] }
 futures = "0.3"
 
 serde = { version = "1.0", features = ["derive"] }
@@ -34,7 +38,7 @@ near-primitives = "0.17.0"
 near-jsonrpc-client = "0.6.0"
 near-jsonrpc-primitives = "0.17.0"
 
-interactive-clap = "0.2.4"
-interactive-clap-derive = "0.2.4"
+interactive-clap = "0.2.7"
+interactive-clap-derive = "0.2.7"
 
-near-cli-rs = { version = "0.5.1", default-features = false }
+near-cli-rs = { version = "0.6.2", default-features = false }

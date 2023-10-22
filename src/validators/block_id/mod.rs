@@ -88,7 +88,7 @@ pub fn display_current_validators_info(
             .avg_hidden_validator_seats_per_shard
             .iter()
             .sum::<u64>();
-    println!(
+    eprintln!(
         "Validators (total: {}, seat price: {})",
         current_validators.len(),
         crate::common::find_seat_price(

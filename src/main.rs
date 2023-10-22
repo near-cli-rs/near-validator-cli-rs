@@ -1,9 +1,11 @@
+#![allow(clippy::large_enum_variant)]
 use interactive_clap::ToCliArgs;
 pub use near_cli_rs::CliResult;
 use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 
 mod common;
 mod proposals;
+mod staking;
 mod validators;
 
 /// near-cli is a toolbox for interacting with NEAR protocol
@@ -29,6 +31,11 @@ pub enum Command {
     ))]
     /// Show both new proposals in the current epoch as well as current validators who are implicitly proposing
     Proposals(self::proposals::Proposals),
+    #[strum_discriminants(strum(
+        message = "staking      -   For validators, there is an option to staking without deploying a staking pool smart contract (stake, unstake, view stake)"
+    ))]
+    /// For validators, there is an option to staking without deploying a staking pool smart contract (stake, unstake, view stake)
+    Staking(self::staking::Staking),
 }
 
 fn main() -> CliResult {
@@ -53,7 +60,7 @@ fn main() -> CliResult {
         ) {
             interactive_clap::ResultFromCli::Ok(cli_cmd)
             | interactive_clap::ResultFromCli::Cancel(Some(cli_cmd)) => {
-                println!(
+                eprintln!(
                     "Your console command:\n{} {}",
                     std::env::args().next().as_deref().unwrap_or("./validator"),
                     shell_words::join(cli_cmd.to_cli_args())
@@ -61,13 +68,13 @@ fn main() -> CliResult {
                 return Ok(());
             }
             interactive_clap::ResultFromCli::Cancel(None) => {
-                println!("Goodbye!");
+                eprintln!("Goodbye!");
                 return Ok(());
             }
             interactive_clap::ResultFromCli::Back => {}
             interactive_clap::ResultFromCli::Err(optional_cli_cmd, err) => {
                 if let Some(cli_cmd) = optional_cli_cmd {
-                    println!(
+                    eprintln!(
                         "Your console command:\n{} {}",
                         std::env::args().next().as_deref().unwrap_or("./bos"),
                         shell_words::join(cli_cmd.to_cli_args())

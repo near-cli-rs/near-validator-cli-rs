@@ -30,6 +30,7 @@ impl ProposalsContext {
             std::sync::Arc::new(display_proposals_info);
         Ok(Self(near_cli_rs::network::NetworkContext {
             config: previous_context.config,
+            interacting_with_account_ids: vec![],
             on_after_getting_network_callback,
         }))
     }
@@ -157,7 +158,7 @@ pub fn display_proposals_info(
         .filter(|stake| stake >= &expected_seat_price.to_yoctonear())
         .count();
 
-    println!(
+    eprintln!(
         "Proposals for the epoch after next (new: {}, passing: {}, expected seat price = {})",
         current_proposals.len(),
         passing_proposals,
