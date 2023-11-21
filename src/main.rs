@@ -76,7 +76,7 @@ fn main() -> CliResult {
                 if let Some(cli_cmd) = optional_cli_cmd {
                     eprintln!(
                         "Your console command:\n{} {}",
-                        std::env::args().next().as_deref().unwrap_or("./bos"),
+                        std::env::args().next().as_deref().unwrap_or("./validator"),
                         shell_words::join(cli_cmd.to_cli_args())
                     );
                 }
