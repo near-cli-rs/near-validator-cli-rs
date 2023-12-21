@@ -1,4 +1,5 @@
 use color_eyre::eyre::{Context, ContextCompat};
+use near_cli_rs::types::near_token::NearToken;
 use num_rational::Rational32;
 
 /// This implementation is ported from near-api-js:
@@ -8,7 +9,7 @@ pub fn find_seat_price(
     max_number_of_seats: u64,
     minimum_stake_ratio: Rational32,
     protocol_version: near_primitives::types::ProtocolVersion,
-) -> color_eyre::eyre::Result<near_cli_rs::common::NearBalance> {
+) -> color_eyre::eyre::Result<NearToken> {
     if protocol_version < 49 {
         return find_seat_price_for_protocol_before_49(stakes, max_number_of_seats);
     }
@@ -20,7 +21,7 @@ pub fn find_seat_price(
 fn find_seat_price_for_protocol_before_49(
     stakes: Vec<u128>,
     num_seats: u64,
-) -> color_eyre::eyre::Result<near_cli_rs::common::NearBalance> {
+) -> color_eyre::eyre::Result<NearToken> {
     let stakes_sum: u128 = stakes.iter().sum();
     if stakes_sum < num_seats.into() {
         return Err(color_eyre::eyre::Report::msg("Stakes are below seats"));
@@ -43,7 +44,7 @@ fn find_seat_price_for_protocol_before_49(
             right = mid;
         }
     }
-    Ok(near_cli_rs::common::NearBalance::from_yoctonear(left))
+    Ok(NearToken::from_yoctonear(left))
 }
 
 /// This implementation is ported from near-api-js:
@@ -52,11 +53,11 @@ fn find_seat_price_for_protocol_after_49(
     mut stakes: Vec<u128>,
     max_number_of_seats: u64,
     minimum_stake_ratio: Rational32,
-) -> color_eyre::eyre::Result<near_cli_rs::common::NearBalance> {
+) -> color_eyre::eyre::Result<NearToken> {
     let stakes_sum: u128 = stakes.iter().sum();
     if u64::try_from(stakes.len()).wrap_err("stakes.len() must fit in u64.")? < max_number_of_seats
     {
-        return Ok(near_cli_rs::common::NearBalance::from_yoctonear(
+        return Ok(NearToken::from_yoctonear(
             stakes_sum
                 .checked_mul(
                     (*minimum_stake_ratio.numer())
@@ -74,7 +75,5 @@ fn find_seat_price_for_protocol_after_49(
     };
     stakes.sort();
 
-    Ok(near_cli_rs::common::NearBalance::from_yoctonear(
-        stakes[0] + 1,
-    ))
+    Ok(NearToken::from_yoctonear(stakes[0] + 1))
 }

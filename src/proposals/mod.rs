@@ -155,7 +155,7 @@ pub fn display_proposals_info(
             Some(new_stake) => new_stake,
             None => proposals.stake,
         })
-        .filter(|stake| stake >= &expected_seat_price.to_yoctonear())
+        .filter(|stake| stake >= &expected_seat_price.as_yoctonear())
         .count();
 
     eprintln!(
@@ -174,18 +174,19 @@ pub fn display_proposals_info(
     {
         let (new_stake, status) = match proposals.new_stake {
             Some(new_stake) => {
-                let status = if new_stake <= expected_seat_price.to_yoctonear() {
+                let status = if new_stake <= expected_seat_price.as_yoctonear() {
                     "Proposal(Declined)".to_string()
                 } else {
                     proposals.status
                 };
                 (
-                    near_cli_rs::common::NearBalance::from_yoctonear(new_stake).to_string(),
+                    near_cli_rs::types::near_token::NearToken::from_yoctonear(new_stake)
+                        .to_string(),
                     status,
                 )
             }
             None => {
-                let status = if proposals.stake <= expected_seat_price.to_yoctonear() {
+                let status = if proposals.stake <= expected_seat_price.as_yoctonear() {
                     "Kicked out".to_string()
                 } else {
                     proposals.status
@@ -195,7 +196,9 @@ pub fn display_proposals_info(
             }
         };
         let stake = match current_validators_stake.get(&proposals.account_id) {
-            Some(stake) => near_cli_rs::common::NearBalance::from_yoctonear(*stake).to_string(),
+            Some(stake) => {
+                near_cli_rs::types::near_token::NearToken::from_yoctonear(*stake).to_string()
+            }
             None => "".to_string(),
         };
 

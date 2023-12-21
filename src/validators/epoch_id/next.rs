@@ -94,7 +94,8 @@ fn display_next_validators_info(
         let mut previous_stake = "".to_string();
         let mut status = "New".to_string();
         if let Some(stake) = current_validators_stake.remove(&validator.account_id) {
-            previous_stake = near_cli_rs::common::NearBalance::from_yoctonear(stake).to_string();
+            previous_stake =
+                near_cli_rs::types::near_token::NearToken::from_yoctonear(stake).to_string();
             status = "Rewarded".to_string();
         };
         table.add_row(prettytable::row![
@@ -102,7 +103,7 @@ fn display_next_validators_info(
             status,
             validator.account_id,
             previous_stake,
-            near_cli_rs::common::NearBalance::from_yoctonear(validator.stake),
+            near_cli_rs::types::near_token::NearToken::from_yoctonear(validator.stake),
         ]);
     }
     for (account_id, previous_stake) in current_validators_stake {
@@ -110,7 +111,7 @@ fn display_next_validators_info(
             "",
             "Kicked out",
             account_id,
-            near_cli_rs::common::NearBalance::from_yoctonear(previous_stake),
+            near_cli_rs::types::near_token::NearToken::from_yoctonear(previous_stake),
             ""
         ]);
     }

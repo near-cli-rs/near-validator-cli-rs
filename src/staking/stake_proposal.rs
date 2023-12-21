@@ -11,7 +11,7 @@ pub struct StakeProposal {
     public_key: near_cli_rs::types::public_key::PublicKey,
     #[interactive_clap(skip_default_input_arg)]
     /// Enter the amount to stake:
-    stake: near_cli_rs::common::NearBalance,
+    stake: near_cli_rs::types::near_token::NearToken,
     #[interactive_clap(named_arg)]
     /// Select network
     network_config: near_cli_rs::network_for_transaction::NetworkForTransactionArgs,
@@ -22,7 +22,7 @@ pub struct StakeProposalContext {
     global_context: near_cli_rs::GlobalContext,
     validator: near_primitives::types::AccountId,
     public_key: near_crypto::PublicKey,
-    stake: near_cli_rs::common::NearBalance,
+    stake: near_cli_rs::types::near_token::NearToken,
 }
 
 impl StakeProposalContext {
@@ -34,7 +34,7 @@ impl StakeProposalContext {
             global_context: previous_context,
             validator: scope.validator.clone().into(),
             public_key: scope.public_key.clone().into(),
-            stake: scope.stake.clone(),
+            stake: scope.stake,
         })
     }
 }
@@ -50,7 +50,7 @@ impl From<StakeProposalContext> for near_cli_rs::commands::ActionContext {
                     receiver_id: validator.clone(),
                     actions: vec![near_primitives::transaction::Action::Stake(
                         near_primitives::transaction::StakeAction {
-                            stake: item.stake.to_yoctonear(),
+                            stake: item.stake.as_yoctonear(),
                             public_key: item.public_key.clone(),
                         },
                     )],
@@ -85,7 +85,7 @@ impl StakeProposal {
 
     fn input_stake(
         _context: &near_cli_rs::GlobalContext,
-    ) -> color_eyre::eyre::Result<Option<near_cli_rs::common::NearBalance>> {
+    ) -> color_eyre::eyre::Result<Option<near_cli_rs::types::near_token::NearToken>> {
         let input_amount =
             CustomType::new("Enter the amount to stake: (example: 10000NEAR)").prompt()?;
         Ok(Some(input_amount))
