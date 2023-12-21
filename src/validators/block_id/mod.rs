@@ -117,7 +117,7 @@ pub fn display_current_validators_info(
         };
         table.add_row(prettytable::row![
             validator.account_id,
-            near_cli_rs::common::NearBalance::from_yoctonear(validator.stake),
+            near_cli_rs::types::near_token::NearToken::from_yoctonear(validator.stake),
             online,
             validator.num_produced_blocks,
             validator.num_expected_blocks,

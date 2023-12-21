@@ -41,4 +41,4 @@ near-jsonrpc-primitives = "0.17.0"
 interactive-clap = "0.2.7"
 interactive-clap-derive = "0.2.7"
 
-near-cli-rs = { version = "0.6.2", default-features = false }
+near-cli-rs = { version = "0.7.5", default-features = false }
