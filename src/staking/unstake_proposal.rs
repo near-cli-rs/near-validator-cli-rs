@@ -42,10 +42,10 @@ impl From<UnstakeProposalContext> for near_cli_rs::commands::ActionContext {
                     signer_id: validator.clone(),
                     receiver_id: validator.clone(),
                     actions: vec![near_primitives::transaction::Action::Stake(
-                        near_primitives::transaction::StakeAction {
+                        Box::new(near_primitives::transaction::StakeAction {
                             stake: 0,
                             public_key: item.public_key.clone(),
-                        },
+                        }),
                     )],
                 })
             })};
