@@ -1,12 +1,21 @@
 [package]
-name = "near-validator-cli"
+name = "near-validator"
 version = "0.1.0"
 authors = [
     "FroVolod <frol_off@meta.ua>",
     "frol <frolvlad@gmail.com>",
     "Near Inc <hello@nearprotocol.com>",
 ]
+license = "MIT OR Apache-2.0"
 edition = "2021"
+repository = "https://github.com/near-cli-rs/near-validator-cli-rs"
+description = "near-validator is your human-friendly companion that helps to interact with NEAR Validators from command line."
+
+[package.metadata.wix]
+upgrade-guid = "C5573F8E-07D3-4504-8A6D-F77C90CB42C3"
+path-guid = "A985F448-11E8-41B9-A8A4-F23CCD7ECC5C"
+license = false
+eula = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -42,3 +51,31 @@ interactive-clap = "0.2.7"
 interactive-clap-derive = "0.2.7"
 
 near-cli-rs = { version = "0.7.5", default-features = false }
+
+# The profile that 'cargo dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
+
+# Config for 'cargo dist'
+[workspace.metadata.dist]
+# The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
+cargo-dist-version = "0.7.2"
+# CI backends to support
+ci = ["github"]
+# The installers to generate for each app
+installers = ["shell", "powershell", "npm", "msi"]
+# Target platforms to build apps for (Rust target-triple syntax)
+targets = ["x86_64-unknown-linux-gnu", "aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-pc-windows-msvc"]
+# The archive format to use for windows builds (defaults .zip)
+windows-archive = ".tar.gz"
+# The archive format to use for non-windows builds (defaults .tar.xz)
+unix-archive = ".tar.gz"
+# Publish jobs to run in CI
+pr-run-mode = "upload"
+# XXX: In order to use custom GITHUB_TOKEN to trigger npm-publish workflow, 
+# we allow dirty CI scripts to avoid cargo-dist complains.
+allow-dirty = ["ci"]
+
+[workspace.metadata.dist.dependencies.apt]
+libudev-dev = { version = "*", targets = ["x86_64-unknown-linux-gnu"] }
