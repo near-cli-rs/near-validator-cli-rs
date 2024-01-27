@@ -8,10 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Check formatting
-      run: |
-        cargo fmt --all -- --check
+      run: cargo fmt --all -- --check
     - name: Install libudev-dev
       run: |
         sudo apt-get update
