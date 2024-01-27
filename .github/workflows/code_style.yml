@@ -9,13 +9,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        override: true
-        profile: minimal
-        components: rustfmt
     - name: Check formatting
       run: |
         cargo fmt --all -- --check
