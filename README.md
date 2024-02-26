@@ -2,17 +2,72 @@
 
 *near-validator* is your **human-friendly** companion that helps to interact with [NEAR Validators](https://pages.near.org/papers/economics-in-sharded-blockchain/#validators) from command line.
 
+_It works the best in combination with [near CLI](https://near.cli.rs)._
+
 <p>
   <img src="docs/media/example.svg" alt="" width="1200">
 </p>
+
+## Install
+
+You can find binary releases of `near-validator` CLI for your OS on the [Releases page](https://github.com/near-cli-rs/near-validator-cli-rs/releases/).
+
+<details>
+  <summary>Install prebuilt binaries via shell script (macOS, Linux, WSL)</summary>
+
+```sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/near-cli-rs/near-validator-cli-rs/releases/latest/download/near-validator-installer.sh | sh
+```
+</details>
+
+<details>
+  <summary>Install prebuilt binaries via powershell script (Windows)</summary>
+
+```sh
+irm https://github.com/near-cli-rs/near-validator-cli-rs/releases/latest/download/near-validator-installer.ps1 | iex
+```
+</details>
+
+<details>
+  <summary>Run prebuilt binaries with npx (Node.js)</summary>
+
+```sh
+npx near-validator
+```
+</details>
+
+<details>
+  <summary>Install prebuilt binaries into your npm project (Node.js)</summary>
+
+```sh
+npm install near-validator
+```
+</details>
+
+<details>
+  <summary>Install from source code (Cargo)</summary>
+
+Install it with `cargo`, just make sure you have [Rust](https://rustup.rs) installed on your computer.
+
+```bash
+cargo install near-validator
+```
+
+or, install the most recent version from git repository:
+
+```bash
+$ cargo install --git https://github.com/near-cli-rs/near-validator-cli-rs
+```
+</details>
 
 ## Available commands:
 
 ### validators
 With this command you can lookup validators for a given epoch. Epoch can be specifyed by EpochId, BlockId, Block hight or `Latest` keyword.
 In the terminal command line type:
-```txt
-./near-validator validators network-config testnet now
+
+```sh
+near-validator validators network-config testnet now
 ```
 
 <details><summary><i>The result of this command will be as follows:</i></summary>
@@ -118,8 +173,9 @@ Validators (total: 90, seat price: 53085.036224843075206029910443 NEAR)
 
 ### proposals
 Show both new proposals in the current epoch as well as current validators who are implicitly proposing:
-```txt
-./near-validator proposals network-config testnet
+
+```sh
+near-validator proposals network-config testnet
 ```
 
 <details><summary><i>The result of this command will be as follows:</i></summary>
@@ -232,8 +288,8 @@ For validators, there is an option to staking without deploying a staking pool s
 
 To view the validator's stake on the last block, you need to enter in the terminal command line:
 
-```txt
-./near-validator staking view-stake volodymyr.testnet network-config testnet now
+```sh
+near-validator staking view-stake volodymyr.testnet network-config testnet now
 ```
 
 <details><summary><i>The result of this command will be as follows:</i></summary>
@@ -247,8 +303,8 @@ Validator volodymyr.testnet staked amount 0 NEAR
 
 To stake the amount you must enter in the terminal command line:
 
-```txt
-./near-validator staking stake-proposal volodymyr.testnet ed25519:AiEo5xepXjY7ChihZJ6AsfoDAaUowhPgvQp997qnFuRP '1500 NEAR' network-config testnet sign-with-keychain send
+```sh
+near-validator staking stake-proposal volodymyr.testnet ed25519:AiEo5xepXjY7ChihZJ6AsfoDAaUowhPgvQp997qnFuRP '1500 NEAR' network-config testnet sign-with-keychain send
 ```
 
 <details><summary><i>The result of this command will be as follows:</i></summary>
@@ -262,8 +318,8 @@ Validator <volodymyr.testnet> has successfully staked 1500 NEAR.
 
 To unstake you must enter in the terminal command line:
 
-```txt
-./near-validator staking unstake-proposal volodymyr.testnet ed25519:AiEo5xepXjY7ChihZJ6AsfoDAaUowhPgvQp997qnFuRP network-config testnet sign-with-keychain send
+```sh
+near-validator staking unstake-proposal volodymyr.testnet ed25519:AiEo5xepXjY7ChihZJ6AsfoDAaUowhPgvQp997qnFuRP network-config testnet sign-with-keychain send
 ```
 
 <details><summary><i>The result of this command will be as follows:</i></summary>
@@ -272,13 +328,3 @@ To unstake you must enter in the terminal command line:
 Validator <volodymyr.testnet> successfully unstaked.
 ```
 </details>
-
-## Install
-
-### From Source
-
-With Rust's package manager cargo, you can install `near-validator` via:
-
-```
-cargo install --git https://github.com/near-cli-rs/near-validator-cli-rs
-```
