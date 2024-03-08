@@ -83,11 +83,7 @@ pub fn display_current_validators_info(
         .blocking_call(&RpcProtocolConfigRequest { block_reference })
         .wrap_err("Failed to get protocol config.")?;
 
-    let max_number_of_seats = protocol_config.num_block_producer_seats
-        + protocol_config
-            .avg_hidden_validator_seats_per_shard
-            .iter()
-            .sum::<u64>();
+    let max_number_of_seats = crate::common::find_max_number_of_seats(&protocol_config);
     eprintln!(
         "Validators (total: {}, seat price: {})",
         current_validators.len(),

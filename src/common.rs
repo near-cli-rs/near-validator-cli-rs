@@ -1,5 +1,7 @@
 use color_eyre::eyre::{Context, ContextCompat};
 use near_cli_rs::types::near_token::NearToken;
+use near_jsonrpc_client::methods::EXPERIMENTAL_protocol_config::RpcProtocolConfigResponse;
+use near_primitives::types::NumSeats;
 use num_rational::Rational32;
 
 /// This implementation is ported from near-api-js:
@@ -14,6 +16,19 @@ pub fn find_seat_price(
         return find_seat_price_for_protocol_before_49(stakes, max_number_of_seats);
     }
     find_seat_price_for_protocol_after_49(stakes, max_number_of_seats, minimum_stake_ratio)
+}
+
+/// With statelessnet feature enabled, we need to take into account `num_chunk_only_producer_seats`.
+pub fn find_max_number_of_seats(protocol_config: &RpcProtocolConfigResponse) -> NumSeats {
+    let seats_before_statelessnet = protocol_config.num_block_producer_seats
+        + protocol_config
+            .avg_hidden_validator_seats_per_shard
+            .iter()
+            .sum::<u64>();
+    std::cmp::max(
+        seats_before_statelessnet,
+        protocol_config.num_chunk_only_producer_seats,
+    )
 }
 
 /// This implementation is ported from near-api-js:
