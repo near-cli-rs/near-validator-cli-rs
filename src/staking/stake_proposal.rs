@@ -41,7 +41,7 @@ impl StakeProposalContext {
 
 impl From<StakeProposalContext> for near_cli_rs::commands::ActionContext {
     fn from(item: StakeProposalContext) -> Self {
-        let on_after_getting_network_callback: near_cli_rs::commands::OnAfterGettingNetworkCallback =
+        let get_prepopulated_transaction_after_getting_network_callback: near_cli_rs::commands::GetPrepopulatedTransactionAfterGettingNetworkCallback =
             {
                 let validator = item.validator.clone();
                 std::sync::Arc::new(move |_network_config| {
@@ -59,12 +59,12 @@ impl From<StakeProposalContext> for near_cli_rs::commands::ActionContext {
         Self {
             global_context: item.global_context,
             interacting_with_account_ids: vec![item.validator],
-            on_after_getting_network_callback,
+            get_prepopulated_transaction_after_getting_network_callback,
             on_before_signing_callback: std::sync::Arc::new(
                 |_prepolulated_unsinged_transaction, _network_config| Ok(()),
             ),
             on_before_sending_transaction_callback: std::sync::Arc::new(
-                |_signed_transaction, _network_config, _message| Ok(()),
+                |_signed_transaction, _network_config| Ok(String::new()),
             ),
             on_after_sending_transaction_callback: std::sync::Arc::new(
                 |_outcome_view, _network_config| Ok(()),

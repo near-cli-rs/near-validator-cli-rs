@@ -39,9 +39,15 @@ pub enum Command {
 }
 
 fn main() -> CliResult {
-    let config = near_cli_rs::common::get_config_toml()?;
+    let config = near_cli_rs::config::Config::get_config_toml()?;
 
-    color_eyre::install()?;
+    #[cfg(not(debug_assertions))]
+    let display_env_section = false;
+    #[cfg(debug_assertions)]
+    let display_env_section = true;
+    color_eyre::config::HookBuilder::default()
+        .display_env_section(display_env_section)
+        .install()?;
 
     let cli = match Cmd::try_parse() {
         Ok(cli) => cli,
@@ -51,6 +57,7 @@ fn main() -> CliResult {
     let global_context = near_cli_rs::GlobalContext {
         config,
         offline: false,
+        teach_me: false,
     };
 
     loop {
