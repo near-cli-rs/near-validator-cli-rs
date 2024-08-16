@@ -108,7 +108,7 @@ pub fn display_current_validators_info(
     for (index, validator) in current_validators.into_iter().enumerate() {
         let online = if validator.num_expected_blocks + validator.num_expected_chunks == 0 {
             if validator.num_expected_endorsements == 0 {
-                "NaN".to_string()
+                "Not yet available".to_string()
             } else {
                 format!(
                     "{:>6.2} %",
