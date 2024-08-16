@@ -25,7 +25,7 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.0.18", features = ["derive"] }
-inquire = "0.6"
+inquire = "0.7"
 strum = { version = "0.24", features = ["derive"] }
 strum_macros = "0.24"
 
@@ -42,15 +42,15 @@ color-eyre = "0.6"
 
 num-rational = "0.3.2"
 
-near-crypto = "0.20.0"
-near-primitives = "0.20.0"
-near-jsonrpc-client = "0.8.0"
-near-jsonrpc-primitives = "0.20.0"
+near-crypto = "0.24"
+near-primitives = "0.24"
+near-jsonrpc-client = "0.11"
+near-jsonrpc-primitives = "0.24"
 
-interactive-clap = "0.2.8"
-interactive-clap-derive = "0.2.8"
+interactive-clap = "0.3"
+interactive-clap-derive = "0.3"
 
-near-cli-rs = { version = "0.7.7", default-features = false }
+near-cli-rs = { version = "0.14.1", default-features = false }
 
 # The profile that 'cargo dist' will build with
 [profile.dist]
