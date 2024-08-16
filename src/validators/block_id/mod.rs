@@ -103,9 +103,9 @@ pub fn display_current_validators_info(
     );
 
     let mut table = Table::new();
-    table.set_titles(prettytable::row![Fg=>"Validator Id", "Stake", "Online", "Blocks produced", "Blocks expected", "Chunks produced", "Chunks expected"]);
+    table.set_titles(prettytable::row![Fg=>"#", "Validator Id", "Stake", "Online", "Blocks produced", "Blocks expected", "Chunks produced", "Chunks expected", "Endorsements produced", "Endorsements expected"]);
 
-    for validator in &current_validators {
+    for (index, validator) in current_validators.into_iter().enumerate() {
         let online = if validator.num_expected_blocks + validator.num_expected_chunks == 0 {
             "NaN".to_string()
         } else {
@@ -116,13 +116,16 @@ pub fn display_current_validators_info(
             )
         };
         table.add_row(prettytable::row![
+            Fg->index + 1,
             validator.account_id,
             near_cli_rs::types::near_token::NearToken::from_yoctonear(validator.stake),
             online,
             validator.num_produced_blocks,
             validator.num_expected_blocks,
             validator.num_produced_chunks,
-            validator.num_expected_chunks
+            validator.num_expected_chunks,
+            validator.num_produced_endorsements,
+            validator.num_expected_endorsements
         ]);
     }
     table.set_format(*prettytable::format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
