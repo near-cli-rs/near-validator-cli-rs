@@ -116,8 +116,16 @@ pub fn display_current_validators_info(
                         / (validator.num_expected_endorsements) as f64
                 )
             }
-        } else if validator.num_expected_blocks == 0 || validator.num_expected_chunks == 0 {
-            "NaN".to_string()
+        } else if validator.num_expected_blocks == 0 {
+            format!(
+                "{:>6.2} %",
+                (validator.num_produced_chunks * 100) as f64 / validator.num_expected_chunks as f64
+            )
+        } else if validator.num_expected_chunks == 0 {
+            format!(
+                "{:>6.2} %",
+                (validator.num_produced_blocks * 100) as f64 / validator.num_expected_blocks as f64
+            )
         } else {
             format!(
                 "{:>6.2} %",
