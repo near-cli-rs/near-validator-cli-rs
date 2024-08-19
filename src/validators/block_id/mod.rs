@@ -106,7 +106,7 @@ pub fn display_current_validators_info(
     table.set_titles(prettytable::row![Fg=>"#", "Validator Id", "Stake", "Online", "Blocks produced", "Blocks expected", "Chunks produced", "Chunks expected", "Endorsements produced", "Endorsements expected"]);
 
     for (index, validator) in current_validators.into_iter().enumerate() {
-        let online = if validator.num_expected_blocks + validator.num_expected_chunks == 0 {
+        let online = if validator.num_expected_blocks == 0 && validator.num_expected_chunks == 0 {
             if validator.num_expected_endorsements == 0 {
                 "Not yet available".to_string()
             } else {
