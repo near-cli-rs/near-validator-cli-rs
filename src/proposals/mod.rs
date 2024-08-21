@@ -54,42 +54,42 @@ pub fn display_proposals_info(
         .wrap_err("Failed to get epoch validators information request.")?;
 
     let current_proposals = epoch_validator_info.current_proposals;
-    let current_proposals_stake: std::collections::HashMap<
-        near_primitives::types::AccountId,
-        near_primitives::types::Balance,
-    > = current_proposals
+    let current_proposals_stake: std::collections::HashMap<_, _> = current_proposals
         .clone()
         .into_iter()
         .map(|validator_stake_view| {
-            let validator_stake = validator_stake_view.into_validator_stake();
-            validator_stake.account_and_stake()
+            let (account_id, stake) = validator_stake_view
+                .into_validator_stake()
+                .account_and_stake();
+            (
+                account_id,
+                near_cli_rs::types::near_token::NearToken::from_yoctonear(stake),
+            )
         })
         .collect();
 
     let current_validators = epoch_validator_info.current_validators;
-    let current_validators_stake: std::collections::HashMap<
-        near_primitives::types::AccountId,
-        near_primitives::types::Balance,
-    > = current_validators
+    let current_validators_stake: std::collections::HashMap<_, _> = current_validators
         .into_iter()
         .map(|current_epoch_validator_info| {
             (
                 current_epoch_validator_info.account_id,
-                current_epoch_validator_info.stake,
+                near_cli_rs::types::near_token::NearToken::from_yoctonear(
+                    current_epoch_validator_info.stake,
+                ),
             )
         })
         .collect();
 
     let next_validators = epoch_validator_info.next_validators;
-    let mut next_validators_stake: std::collections::HashMap<
-        near_primitives::types::AccountId,
-        near_primitives::types::Balance,
-    > = next_validators
+    let mut next_validators_stake: std::collections::HashMap<_, _> = next_validators
         .into_iter()
         .map(|next_epoch_validator_info| {
             (
                 next_epoch_validator_info.account_id,
-                next_epoch_validator_info.stake,
+                near_cli_rs::types::near_token::NearToken::from_yoctonear(
+                    next_epoch_validator_info.stake,
+                ),
             )
         })
         .collect();
@@ -142,7 +142,7 @@ pub fn display_proposals_info(
     let expected_seat_price = crate::common::find_seat_price(
         combine_validators_and_proposals_table
             .iter()
-            .map(|proposal| proposal.stake)
+            .map(|proposal| proposal.stake.as_yoctonear())
             .collect(),
         max_number_of_seats,
         genesis_config.minimum_stake_ratio,
@@ -155,7 +155,7 @@ pub fn display_proposals_info(
             Some(new_stake) => new_stake,
             None => proposals.stake,
         })
-        .filter(|stake| stake >= &expected_seat_price.as_yoctonear())
+        .filter(|stake| stake >= &expected_seat_price)
         .count();
 
     eprintln!(
@@ -174,19 +174,15 @@ pub fn display_proposals_info(
     {
         let (new_stake, status) = match proposals.new_stake {
             Some(new_stake) => {
-                let status = if new_stake <= expected_seat_price.as_yoctonear() {
+                let status = if new_stake <= expected_seat_price {
                     "Proposal(Declined)".to_string()
                 } else {
                     proposals.status
                 };
-                (
-                    near_cli_rs::types::near_token::NearToken::from_yoctonear(new_stake)
-                        .to_string(),
-                    status,
-                )
+                (format!("{} NEAR", new_stake.0.as_near()), status)
             }
             None => {
-                let status = if proposals.stake <= expected_seat_price.as_yoctonear() {
+                let status = if proposals.stake <= expected_seat_price {
                     "Kicked out".to_string()
                 } else {
                     proposals.status
@@ -197,7 +193,7 @@ pub fn display_proposals_info(
         };
         let stake = match current_validators_stake.get(&proposals.account_id) {
             Some(stake) => {
-                near_cli_rs::types::near_token::NearToken::from_yoctonear(*stake).to_string()
+                format!("{} NEAR", stake.0.as_near())
             }
             None => "".to_string(),
         };
@@ -219,6 +215,6 @@ pub fn display_proposals_info(
 pub struct ProposalsTable {
     pub account_id: near_primitives::types::AccountId,
     pub status: String,
-    pub stake: near_primitives::types::Balance,
-    pub new_stake: Option<near_primitives::types::Balance>,
+    pub stake: near_cli_rs::types::near_token::NearToken,
+    pub new_stake: Option<near_cli_rs::types::near_token::NearToken>,
 }

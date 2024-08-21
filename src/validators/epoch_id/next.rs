@@ -39,15 +39,14 @@ fn display_next_validators_info(
         .wrap_err("Failed to get epoch validators information request.")?;
 
     let current_validators = epoch_validator_info.current_validators;
-    let mut current_validators_stake: std::collections::HashMap<
-        near_primitives::types::AccountId,
-        near_primitives::types::Balance,
-    > = current_validators
+    let mut current_validators_stake: std::collections::HashMap<_, _> = current_validators
         .into_iter()
         .map(|current_epoch_validator_info| {
             (
                 current_epoch_validator_info.account_id,
-                current_epoch_validator_info.stake,
+                near_cli_rs::types::near_token::NearToken::from_yoctonear(
+                    current_epoch_validator_info.stake,
+                ),
             )
         })
         .collect();
@@ -94,8 +93,7 @@ fn display_next_validators_info(
         let mut previous_stake = "".to_string();
         let mut status = "New".to_string();
         if let Some(stake) = current_validators_stake.remove(&validator.account_id) {
-            previous_stake =
-                near_cli_rs::types::near_token::NearToken::from_yoctonear(stake).to_string();
+            previous_stake = format!("{} NEAR", stake.0.as_near());
             status = "Rewarded".to_string();
         };
         table.add_row(prettytable::row![
@@ -103,7 +101,7 @@ fn display_next_validators_info(
             status,
             validator.account_id,
             previous_stake,
-            near_cli_rs::types::near_token::NearToken::from_yoctonear(validator.stake),
+            format!("{} NEAR", near_cli_rs::types::near_token::NearToken::from_yoctonear(validator.stake).0.as_near()),
         ]);
     }
     for (account_id, previous_stake) in current_validators_stake {
@@ -111,7 +109,7 @@ fn display_next_validators_info(
             "",
             "Kicked out",
             account_id,
-            near_cli_rs::types::near_token::NearToken::from_yoctonear(previous_stake),
+            format!("{} NEAR", previous_stake.0.as_near()),
             ""
         ]);
     }
