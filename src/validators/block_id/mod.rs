@@ -103,26 +103,48 @@ pub fn display_current_validators_info(
     );
 
     let mut table = Table::new();
-    table.set_titles(prettytable::row![Fg=>"Validator Id", "Stake", "Online", "Blocks produced", "Blocks expected", "Chunks produced", "Chunks expected"]);
+    table.set_titles(prettytable::row![Fg=>"#", "Validator Id", "Stake", "Online", "Blocks produced", "Blocks expected", "Chunks produced", "Chunks expected", "Endorsements produced", "Endorsements expected"]);
 
-    for validator in &current_validators {
-        let online = if validator.num_expected_blocks + validator.num_expected_chunks == 0 {
-            "NaN".to_string()
+    for (index, validator) in current_validators.into_iter().enumerate() {
+        let online = if validator.num_expected_blocks == 0 && validator.num_expected_chunks == 0 {
+            if validator.num_expected_endorsements == 0 {
+                "Not yet available".to_string()
+            } else {
+                format!(
+                    "{:>6.2} %",
+                    (validator.num_produced_endorsements * 100) as f64
+                        / (validator.num_expected_endorsements) as f64
+                )
+            }
+        } else if validator.num_expected_blocks == 0 {
+            format!(
+                "{:>6.2} %",
+                (validator.num_produced_chunks * 100) as f64 / validator.num_expected_chunks as f64
+            )
+        } else if validator.num_expected_chunks == 0 {
+            format!(
+                "{:>6.2} %",
+                (validator.num_produced_blocks * 100) as f64 / validator.num_expected_blocks as f64
+            )
         } else {
             format!(
                 "{:>6.2} %",
-                ((validator.num_produced_blocks + validator.num_produced_chunks) * 100) as f64
-                    / (validator.num_expected_blocks + validator.num_expected_chunks) as f64
+                (validator.num_produced_blocks as f64 / validator.num_expected_blocks as f64).min(
+                    validator.num_produced_chunks as f64 / validator.num_expected_chunks as f64
+                ) * 100_f64
             )
         };
         table.add_row(prettytable::row![
+            Fg->index + 1,
             validator.account_id,
             near_cli_rs::types::near_token::NearToken::from_yoctonear(validator.stake),
             online,
             validator.num_produced_blocks,
             validator.num_expected_blocks,
             validator.num_produced_chunks,
-            validator.num_expected_chunks
+            validator.num_expected_chunks,
+            validator.num_produced_endorsements,
+            validator.num_expected_endorsements
         ]);
     }
     table.set_format(*prettytable::format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
