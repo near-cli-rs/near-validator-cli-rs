@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.3...v0.1.4) - 2024-08-21
+
+### Added
+- Use whole NEAR amounts when displaying stake in the tables since the <0.1 NEAR is irrelevant for the users ([#16](https://github.com/near-cli-rs/near-validator-cli-rs/pull/16))
+
 ## [0.1.3](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.2...v0.1.3) - 2024-08-21
 
 ### Added
