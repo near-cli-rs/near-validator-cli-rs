@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.2...v0.1.3) - 2024-08-21
+
+### Added
+- Added "Endorsements" columns to the output and updated the formula for online % calculation ([#15](https://github.com/near-cli-rs/near-validator-cli-rs/pull/15))
+
+### Fixed
+- Fixed a syntax error in CI (publish-to-npm.yml)
+
+### Other
+- Updated near-cli-rs crate to 0.14 release ([#14](https://github.com/near-cli-rs/near-validator-cli-rs/pull/14))
+- Added installation instructions to the README
+
 ## [0.1.2](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.1...v0.1.2) - 2024-02-03
 
 ### Other
