@@ -1,6 +1,7 @@
 #![allow(clippy::large_enum_variant)]
 use interactive_clap::ToCliArgs;
 pub use near_cli_rs::CliResult;
+use near_cli_rs::Verbosity;
 use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 
 mod common;
@@ -13,6 +14,12 @@ mod validators;
 #[derive(Debug, Clone, interactive_clap::InteractiveClap)]
 #[interactive_clap(context = near_cli_rs::GlobalContext)]
 struct Cmd {
+    /// Quiet mode
+    #[interactive_clap(long)]
+    quiet: bool,
+    /// TEACH-ME mode
+    #[interactive_clap(long)]
+    teach_me: bool,
     #[interactive_clap(subcommand)]
     command: self::Command,
 }
@@ -54,10 +61,15 @@ fn main() -> CliResult {
         Err(error) => error.exit(),
     };
 
+    let verbosity = match (cli.quiet, cli.teach_me) {
+        (true, _) => Verbosity::Quiet,
+        (false, true) => Verbosity::TeachMe,
+        (false, false) => Verbosity::Interactive,
+    };
     let global_context = near_cli_rs::GlobalContext {
         config,
         offline: false,
-        teach_me: false,
+        verbosity,
     };
 
     loop {
