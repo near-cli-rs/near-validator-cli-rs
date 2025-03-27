@@ -23,7 +23,7 @@ fn find_seat_price_for_protocol_before_49(
     num_seats: u64,
 ) -> color_eyre::eyre::Result<NearToken> {
     let stakes_sum: u128 = stakes.iter().sum();
-    if stakes_sum < num_seats as u128 {
+    if stakes_sum < u128::from(num_seats) {
         return Err(color_eyre::eyre::Report::msg("Stakes are below seats"));
     }
     let mut left: u128 = 1;
@@ -34,7 +34,7 @@ fn find_seat_price_for_protocol_before_49(
         let mut current_sum: u128 = 0;
         for stake in &stakes {
             current_sum = current_sum.saturating_add(stake.saturating_div(mid));
-            if current_sum >= num_seats as u128 {
+            if current_sum >= u128::from(num_seats) {
                 left = mid;
                 found = true;
                 break;
