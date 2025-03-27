@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.4...v0.1.5) - 2025-03-27
+
+### Other
+
+- Updated near-cli-rs crate to 0.19 release ([#18](https://github.com/near-cli-rs/near-validator-cli-rs/pull/18))
+
 ## [0.1.4](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.3...v0.1.4) - 2024-08-21
 
 ### Added
