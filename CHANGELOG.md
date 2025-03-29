@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.5...v0.1.6) - 2025-03-29
+
+### Added
+
+- Upgraded cargo-dist to 0.28.0 ([#21](https://github.com/near-cli-rs/near-validator-cli-rs/pull/21))
+
+### Other
+
+- Replaced integer casts with explicit From trait calls
+
 ## [0.1.5](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.4...v0.1.5) - 2025-03-27
 
 ### Other
