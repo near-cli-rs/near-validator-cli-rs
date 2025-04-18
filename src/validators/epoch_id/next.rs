@@ -64,11 +64,7 @@ fn display_next_validators_info(
         })
         .wrap_err("Failed to get protocol config.")?;
 
-    let max_number_of_seats = protocol_config.num_block_producer_seats
-        + protocol_config
-            .avg_hidden_validator_seats_per_shard
-            .iter()
-            .sum::<u64>();
+    let max_number_of_seats = crate::common::find_max_number_of_seats(&protocol_config);
     let seat_price = crate::common::find_seat_price(
         next_validators
             .iter()
