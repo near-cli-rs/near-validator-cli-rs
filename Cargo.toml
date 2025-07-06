@@ -42,15 +42,15 @@ color-eyre = "0.6"
 
 num-rational = "0.3.2"
 
-near-crypto = "0.29"
-near-primitives = "0.29"
-near-jsonrpc-client = "0.16.1"
-near-jsonrpc-primitives = "0.29"
+near-crypto = "0.30"
+near-primitives = "0.30"
+near-jsonrpc-client = { version = "0.17", features = ["any", "adversarial"] }
+near-jsonrpc-primitives = "0.30"
 
 interactive-clap = "0.3"
 interactive-clap-derive = "0.3"
 
-near-cli-rs = { version = "0.19.0", default-features = false }
+near-cli-rs = { version = "0.20.0", default-features = false }
 
 # The profile that 'cargo dist' will build with
 [profile.dist]

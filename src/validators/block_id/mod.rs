@@ -1,13 +1,15 @@
 use color_eyre::eyre::Context;
 use prettytable::Table;
 
-use near_jsonrpc_client::methods::{
-    validators::RpcValidatorRequest, EXPERIMENTAL_genesis_config::RpcGenesisConfigRequest,
-    EXPERIMENTAL_protocol_config::RpcProtocolConfigRequest,
-};
+use near_jsonrpc_client::methods::validators::RpcValidatorRequest;
 use near_primitives::types::{BlockId, BlockReference, EpochReference, Finality};
 
 use near_cli_rs::common::JsonRpcClientExt;
+
+use crate::types::{
+    partial_genesis_config::get_partial_genesis_config,
+    partial_protocol_config::get_partial_protocol_config,
+};
 
 #[derive(Debug, Clone, interactive_clap::InteractiveClap)]
 #[interactive_clap(input_context = super::network_view_at_block::NetworkViewAtBlockArgsContext)]
@@ -75,16 +77,12 @@ pub fn display_current_validators_info(
         .current_validators;
     current_validators.sort_by(|a, b| b.stake.cmp(&a.stake));
 
-    let genesis_config = json_rpc_client
-        .blocking_call(&RpcGenesisConfigRequest)
-        .wrap_err("Failed to get genesis config.")?;
+    let partial_genesis_config = get_partial_genesis_config(&json_rpc_client)?;
 
-    let protocol_config = json_rpc_client
-        .blocking_call(&RpcProtocolConfigRequest { block_reference })
-        .wrap_err("Failed to get protocol config.")?;
+    let partial_protocol_config = get_partial_protocol_config(&json_rpc_client, &block_reference)?;
 
-    let max_number_of_seats = protocol_config.num_block_producer_seats
-        + protocol_config
+    let max_number_of_seats = partial_protocol_config.num_block_producer_seats
+        + partial_protocol_config
             .avg_hidden_validator_seats_per_shard
             .iter()
             .sum::<u64>();
@@ -97,8 +95,8 @@ pub fn display_current_validators_info(
                 .map(|current_validator| current_validator.stake)
                 .collect(),
             max_number_of_seats,
-            genesis_config.minimum_stake_ratio,
-            protocol_config.protocol_version
+            partial_genesis_config.minimum_stake_ratio,
+            partial_protocol_config.protocol_version
         )?
     );
 

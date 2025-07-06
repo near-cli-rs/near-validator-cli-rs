@@ -7,6 +7,7 @@ use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 mod common;
 mod proposals;
 mod staking;
+mod types;
 mod validators;
 
 /// near-cli is a toolbox for interacting with NEAR protocol
