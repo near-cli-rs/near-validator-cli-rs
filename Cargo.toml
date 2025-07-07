@@ -44,7 +44,7 @@ num-rational = "0.3.2"
 
 near-crypto = "0.30"
 near-primitives = "0.30"
-near-jsonrpc-client = { version = "0.17", features = ["any", "adversarial"] }
+near-jsonrpc-client = { version = "0.17", features = ["any"] }
 near-jsonrpc-primitives = "0.30"
 
 interactive-clap = "0.3"
