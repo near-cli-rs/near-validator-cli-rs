@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.6...v0.1.7) - 2025-07-08
+
+### Fixed
+
+- Use RpcConfigError error type instead of () for ProtocolConfig requests ([#26](https://github.com/near-cli-rs/near-validator-cli-rs/pull/26))
+- Fixed error RpcError: [missing field disable_9393_fix]  ([#22](https://github.com/near-cli-rs/near-validator-cli-rs/pull/22))
+
+### Other
+
+- Replaced ubuntu-20.04, being browned out ([#25](https://github.com/near-cli-rs/near-validator-cli-rs/pull/25))
+
 ## [0.1.6](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.5...v0.1.6) - 2025-03-29
 
 ### Added
