@@ -1,3 +1,5 @@
+use near_jsonrpc_client::methods::EXPERIMENTAL_protocol_config::RpcProtocolConfigError;
+
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct PartialProtocolConfigView {
     pub protocol_version: near_primitives::types::ProtocolVersion,
@@ -11,7 +13,9 @@ pub fn get_partial_protocol_config(
     json_rpc_client: &near_jsonrpc_client::JsonRpcClient,
     block_reference: &near_primitives::types::BlockReference,
 ) -> color_eyre::eyre::Result<PartialProtocolConfigView> {
-    let request = near_jsonrpc_client::methods::any::<Result<PartialProtocolConfigView, ()>>(
+    let request = near_jsonrpc_client::methods::any::<
+        Result<PartialProtocolConfigView, RpcProtocolConfigError>,
+    >(
         "EXPERIMENTAL_protocol_config",
         serde_json::to_value(block_reference)?,
     );
