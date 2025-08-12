@@ -6,6 +6,7 @@ use strum::{EnumDiscriminants, EnumIter, EnumMessage};
 
 mod common;
 mod proposals;
+mod self_update;
 mod staking;
 mod types;
 mod validators;
@@ -44,6 +45,9 @@ pub enum Command {
     ))]
     /// For validators, there is an option to staking without deploying a staking pool smart contract (stake, unstake, view stake)
     Staking(self::staking::Staking),
+    #[strum_discriminants(strum(message = "self-update  -   Self update near-validator"))]
+    /// Self update near-validator
+    SelfUpdate(self::self_update::SelfUpdateCommand),
 }
 
 fn main() -> CliResult {

@@ -42,6 +42,12 @@ color-eyre = "0.6"
 
 num-rational = "0.3.2"
 
+semver = { version = "1.0.4", optional = true }
+self_update = { version = "0.41.0", features = [
+    "archive-tar",
+    "compression-flate2",
+], optional = true }
+
 near-crypto = "0.31"
 near-primitives = "0.31"
 near-jsonrpc-client = { version = "0.18", features = ["any"] }
@@ -51,6 +57,10 @@ interactive-clap = "0.3"
 interactive-clap-derive = "0.3"
 
 near-cli-rs = { version = "0.22.1", default-features = false }
+
+[features]
+default = ["self-update"]
+self-update = ["self_update", "semver"]
 
 # The profile that 'cargo dist' will build with
 [profile.dist]
