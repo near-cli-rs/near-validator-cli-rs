@@ -57,3 +57,16 @@ impl SelfUpdateCommandContext {
         Ok(Self)
     }
 }
+
+pub fn get_latest_version() -> color_eyre::eyre::Result<String> {
+    Ok(self_update::backends::github::Update::configure()
+        .repo_owner("near-cli-rs")
+        .repo_name("near-validator-cli-rs")
+        .bin_name("near-validator")
+        .current_version(self_update::cargo_crate_version!())
+        .build()
+        .wrap_err("Failed to build self_update")?
+        .get_latest_release()
+        .wrap_err("Failed to get latest release")?
+        .version)
+}
