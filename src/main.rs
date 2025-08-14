@@ -65,6 +65,11 @@ fn main() -> CliResult {
         .display_env_section(display_env_section)
         .install()?;
 
+    #[cfg(feature = "self-update")]
+    let handle = std::thread::spawn(|| -> color_eyre::eyre::Result<String> {
+        self::update_self::get_latest_version()
+    });
+
     let cli = match Cmd::try_parse() {
         Ok(cli) => cli,
         Err(error) => error.exit(),
@@ -122,9 +127,6 @@ fn main() -> CliResult {
             ..
         }))
     ) {
-        let handle = std::thread::spawn(|| -> color_eyre::eyre::Result<String> {
-            self::update_self::get_latest_version()
-        });
         if let Ok(Ok(latest_version)) = handle.join() {
             let current_version = semver::Version::parse(self_update::cargo_crate_version!())
                 .wrap_err("Failed to parse current version of `near-validator`")?;
