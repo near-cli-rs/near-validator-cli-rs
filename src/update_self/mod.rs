@@ -22,12 +22,7 @@ impl SelfUpdateCommandContext {
             .repo_owner("near-cli-rs")
             .repo_name("near-validator-cli-rs")
             .bin_path_in_archive(
-                format!(
-                    "near-validator-cli-rs-{}/{}",
-                    self_update::get_target(),
-                    BIN_NAME
-                )
-                .as_str(),
+                format!("near-validator-{}/{}", self_update::get_target(), BIN_NAME).as_str(),
             )
             .bin_name(BIN_NAME)
             .show_download_progress(true)
