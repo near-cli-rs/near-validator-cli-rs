@@ -1,6 +1,6 @@
 [package]
 name = "near-validator"
-version = "0.1.7"
+version = "0.1.8"
 authors = [
     "FroVolod <frol_off@meta.ua>",
     "frol <frolvlad@gmail.com>",
