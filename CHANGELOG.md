@@ -1,10 +1,21 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.8](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.7...v0.1.8) - 2025-08-31
+
+### Added
+
+- Added self update for near-validator ([#27](https://github.com/near-cli-rs/near-validator-cli-rs/pull/27))
+
+### Other
+
+- update near-* dependencies to 0.31 release ([#28](https://github.com/near-cli-rs/near-validator-cli-rs/pull/28))
 
 ## [0.1.7](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.6...v0.1.7) - 2025-07-08
 
