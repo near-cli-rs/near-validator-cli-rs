@@ -1,4 +1,8 @@
 #![allow(clippy::large_enum_variant)]
+
+use color_eyre::eyre::WrapErr;
+use color_eyre::owo_colors::OwoColorize;
+
 use interactive_clap::ToCliArgs;
 pub use near_cli_rs::CliResult;
 use near_cli_rs::Verbosity;
@@ -8,6 +12,7 @@ mod common;
 mod proposals;
 mod staking;
 mod types;
+mod update_self;
 mod validators;
 
 /// near-cli is a toolbox for interacting with NEAR protocol
@@ -44,6 +49,9 @@ pub enum Command {
     ))]
     /// For validators, there is an option to staking without deploying a staking pool smart contract (stake, unstake, view stake)
     Staking(self::staking::Staking),
+    #[strum_discriminants(strum(message = "self-update  -   Self update near-validator"))]
+    /// Self update near-validator
+    SelfUpdate(self::update_self::SelfUpdateCommand),
 }
 
 fn main() -> CliResult {
@@ -56,6 +64,11 @@ fn main() -> CliResult {
     color_eyre::config::HookBuilder::default()
         .display_env_section(display_env_section)
         .install()?;
+
+    #[cfg(feature = "self-update")]
+    let handle = std::thread::spawn(|| -> color_eyre::eyre::Result<String> {
+        self::update_self::get_latest_version()
+    });
 
     let cli = match Cmd::try_parse() {
         Ok(cli) => cli,
@@ -73,35 +86,75 @@ fn main() -> CliResult {
         verbosity,
     };
 
-    loop {
-        match <Cmd as interactive_clap::FromCli>::from_cli(
-            Some(cli.clone()),
-            global_context.clone(),
-        ) {
-            interactive_clap::ResultFromCli::Ok(cli_cmd)
-            | interactive_clap::ResultFromCli::Cancel(Some(cli_cmd)) => {
+    let cli_cmd = match <Cmd as interactive_clap::FromCli>::from_cli(
+        Some(cli.clone()),
+        global_context.clone(),
+    ) {
+        interactive_clap::ResultFromCli::Ok(cli_cmd)
+        | interactive_clap::ResultFromCli::Cancel(Some(cli_cmd)) => {
+            eprintln!(
+                "Your console command:\n{} {}",
+                std::env::args().next().as_deref().unwrap_or("./validator"),
+                shell_words::join(cli_cmd.to_cli_args())
+            );
+            Ok(Some(cli_cmd))
+        }
+        interactive_clap::ResultFromCli::Cancel(None) => {
+            eprintln!("Goodbye!");
+            Ok(None)
+        }
+        interactive_clap::ResultFromCli::Back => {
+            unreachable!("TopLevelCommand does not have back option")
+        }
+        interactive_clap::ResultFromCli::Err(optional_cli_cmd, err) => {
+            if let Some(cli_cmd) = optional_cli_cmd {
                 eprintln!(
                     "Your console command:\n{} {}",
                     std::env::args().next().as_deref().unwrap_or("./validator"),
                     shell_words::join(cli_cmd.to_cli_args())
                 );
-                return Ok(());
             }
-            interactive_clap::ResultFromCli::Cancel(None) => {
-                eprintln!("Goodbye!");
-                return Ok(());
-            }
-            interactive_clap::ResultFromCli::Back => {}
-            interactive_clap::ResultFromCli::Err(optional_cli_cmd, err) => {
-                if let Some(cli_cmd) = optional_cli_cmd {
-                    eprintln!(
-                        "Your console command:\n{} {}",
-                        std::env::args().next().as_deref().unwrap_or("./validator"),
-                        shell_words::join(cli_cmd.to_cli_args())
-                    );
-                }
-                return Err(err);
+            Err(err)
+        }
+    };
+
+    #[cfg(feature = "self-update")]
+    // We don't need to check the version if user has just called self-update
+    if !matches!(
+        cli_cmd,
+        Ok(Some(CliCmd {
+            command: Some(CliCommand::SelfUpdate(update_self::CliSelfUpdateCommand {})),
+            ..
+        }))
+    ) {
+        if let Ok(Ok(latest_version)) = handle.join() {
+            let current_version = semver::Version::parse(self_update::cargo_crate_version!())
+                .wrap_err("Failed to parse current version of `near-validator`")?;
+
+            let latest_version = semver::Version::parse(&latest_version)
+                .wrap_err("Failed to parse latest version of `near-validator`")?;
+
+            if current_version < latest_version {
+                eprintln!(
+                    "\n`near-validator` has a new update available \x1b[2m{current_version}\x1b[0m →  \x1b[32m{latest_version}\x1b[0m"
+                );
+                let self_update_cli_cmd = CliCmd {
+                    quiet: false,
+                    teach_me: false,
+                    command: Some(CliCommand::SelfUpdate(update_self::CliSelfUpdateCommand {})),
+                };
+                eprintln!(
+                    "To update `near-validator` use: {} {}",
+                    std::env::args()
+                        .next()
+                        .as_deref()
+                        .unwrap_or("./validator")
+                        .yellow(),
+                    shell_words::join(self_update_cli_cmd.to_cli_args()).yellow()
+                );
             }
         }
-    }
+    };
+
+    cli_cmd.map(|_| ())
 }
