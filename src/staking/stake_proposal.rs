@@ -50,7 +50,7 @@ impl From<StakeProposalContext> for near_cli_rs::commands::ActionContext {
                     receiver_id: validator.clone(),
                     actions: vec![near_primitives::transaction::Action::Stake(
                         Box::new(near_primitives::transaction::StakeAction {
-                            stake: item.stake.as_yoctonear(),
+                            stake: item.stake.into(),
                             public_key: item.public_key.clone(),
                         }),
                     )],

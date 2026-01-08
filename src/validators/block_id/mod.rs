@@ -92,7 +92,7 @@ pub fn display_current_validators_info(
         crate::common::find_seat_price(
             current_validators
                 .iter()
-                .map(|current_validator| current_validator.stake)
+                .map(|current_validator| current_validator.stake.as_yoctonear())
                 .collect(),
             max_number_of_seats,
             partial_genesis_config.minimum_stake_ratio,
@@ -135,7 +135,7 @@ pub fn display_current_validators_info(
         table.add_row(prettytable::row![
             Fg->index + 1,
             validator.account_id,
-            format!("{} NEAR", near_cli_rs::types::near_token::NearToken::from_yoctonear(validator.stake).0.as_near()),
+            validator.stake,
             online,
             validator.num_produced_blocks,
             validator.num_expected_blocks,

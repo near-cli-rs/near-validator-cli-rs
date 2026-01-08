@@ -46,9 +46,7 @@ fn display_next_validators_info(
         .map(|current_epoch_validator_info| {
             (
                 current_epoch_validator_info.account_id,
-                near_cli_rs::types::near_token::NearToken::from_yoctonear(
-                    current_epoch_validator_info.stake,
-                ),
+                current_epoch_validator_info.stake,
             )
         })
         .collect();
@@ -69,7 +67,7 @@ fn display_next_validators_info(
     let seat_price = crate::common::find_seat_price(
         next_validators
             .iter()
-            .map(|next_validator| next_validator.stake)
+            .map(|next_validator| next_validator.stake.as_yoctonear())
             .collect(),
         max_number_of_seats,
         partial_genesis_config.minimum_stake_ratio,
@@ -90,7 +88,7 @@ fn display_next_validators_info(
         let mut previous_stake = "".to_string();
         let mut status = "New".to_string();
         if let Some(stake) = current_validators_stake.remove(&validator.account_id) {
-            previous_stake = format!("{} NEAR", stake.0.as_near());
+            previous_stake = stake.to_string();
             status = "Rewarded".to_string();
         };
         table.add_row(prettytable::row![
@@ -98,7 +96,7 @@ fn display_next_validators_info(
             status,
             validator.account_id,
             previous_stake,
-            format!("{} NEAR", near_cli_rs::types::near_token::NearToken::from_yoctonear(validator.stake).0.as_near()),
+            validator.stake,
         ]);
     }
     for (account_id, previous_stake) in current_validators_stake {
@@ -106,7 +104,7 @@ fn display_next_validators_info(
             "",
             "Kicked out",
             account_id,
-            format!("{} NEAR", previous_stake.0.as_near()),
+            previous_stake,
             ""
         ]);
     }
