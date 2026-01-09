@@ -1,5 +1,5 @@
 use color_eyre::eyre::{Context, ContextCompat};
-use near_cli_rs::types::near_token::NearToken;
+use near_token::NearToken;
 use num_rational::Rational32;
 
 /// This implementation is ported from near-api-js:

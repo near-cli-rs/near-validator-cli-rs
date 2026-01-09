@@ -55,6 +55,8 @@ pub enum Command {
 }
 
 fn main() -> CliResult {
+    inquire::set_global_render_config(near_cli_rs::get_global_render_config());
+
     let config = near_cli_rs::config::Config::get_config_toml()?;
 
     #[cfg(not(debug_assertions))]
@@ -80,6 +82,8 @@ fn main() -> CliResult {
         (false, true) => Verbosity::TeachMe,
         (false, false) => Verbosity::Interactive,
     };
+    near_cli_rs::setup_tracing(verbosity)?;
+
     let global_context = near_cli_rs::GlobalContext {
         config,
         offline: false,

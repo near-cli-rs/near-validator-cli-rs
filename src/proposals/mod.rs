@@ -63,10 +63,7 @@ pub fn display_proposals_info(
             let (account_id, stake) = validator_stake_view
                 .into_validator_stake()
                 .account_and_stake();
-            (
-                account_id,
-                near_cli_rs::types::near_token::NearToken::from_yoctonear(stake),
-            )
+            (account_id, stake)
         })
         .collect();
 
@@ -76,9 +73,7 @@ pub fn display_proposals_info(
         .map(|current_epoch_validator_info| {
             (
                 current_epoch_validator_info.account_id,
-                near_cli_rs::types::near_token::NearToken::from_yoctonear(
-                    current_epoch_validator_info.stake,
-                ),
+                current_epoch_validator_info.stake,
             )
         })
         .collect();
@@ -89,9 +84,7 @@ pub fn display_proposals_info(
         .map(|next_epoch_validator_info| {
             (
                 next_epoch_validator_info.account_id,
-                near_cli_rs::types::near_token::NearToken::from_yoctonear(
-                    next_epoch_validator_info.stake,
-                ),
+                next_epoch_validator_info.stake,
             )
         })
         .collect();
@@ -176,7 +169,7 @@ pub fn display_proposals_info(
                 } else {
                     proposals.status
                 };
-                (format!("{} NEAR", new_stake.0.as_near()), status)
+                (new_stake.to_string(), status)
             }
             None => {
                 let status = if proposals.stake <= expected_seat_price {
@@ -189,9 +182,7 @@ pub fn display_proposals_info(
             }
         };
         let stake = match current_validators_stake.get(&proposals.account_id) {
-            Some(stake) => {
-                format!("{} NEAR", stake.0.as_near())
-            }
+            Some(stake) => stake.to_string(),
             None => "".to_string(),
         };
 
@@ -212,6 +203,6 @@ pub fn display_proposals_info(
 pub struct ProposalsTable {
     pub account_id: near_primitives::types::AccountId,
     pub status: String,
-    pub stake: near_cli_rs::types::near_token::NearToken,
-    pub new_stake: Option<near_cli_rs::types::near_token::NearToken>,
+    pub stake: near_token::NearToken,
+    pub new_stake: Option<near_token::NearToken>,
 }
