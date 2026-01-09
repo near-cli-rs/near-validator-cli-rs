@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.8...v0.1.9) - 2026-01-09
+
+### Added
+
+- Enabled aarch64 Windows binary builds (upgraded cargo-dist to 0.29.0) ([#30](https://github.com/near-cli-rs/near-validator-cli-rs/pull/30))
+
+### Other
+
+- Updated near-cli-rs crate to 0.23.5 release ([#32](https://github.com/near-cli-rs/near-validator-cli-rs/pull/32))
+
 ## [0.1.8](https://github.com/near-cli-rs/near-validator-cli-rs/compare/v0.1.7...v0.1.8) - 2025-08-31
 
 ### Added
