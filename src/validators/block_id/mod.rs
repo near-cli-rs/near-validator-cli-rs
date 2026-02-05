@@ -65,7 +65,7 @@ pub fn display_current_validators_info(
         _ => {
             return Err(color_eyre::eyre::ErrReport::msg(
                 "BlockReference: incorrect value entered",
-            ))
+            ));
         }
     };
 
