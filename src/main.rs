@@ -130,8 +130,8 @@ fn main() -> CliResult {
             command: Some(CliCommand::SelfUpdate(update_self::CliSelfUpdateCommand {})),
             ..
         }))
-    ) {
-        if let Ok(Ok(latest_version)) = handle.join() {
+    )
+        && let Ok(Ok(latest_version)) = handle.join() {
             let current_version = semver::Version::parse(self_update::cargo_crate_version!())
                 .wrap_err("Failed to parse current version of `near-validator`")?;
 
@@ -157,8 +157,7 @@ fn main() -> CliResult {
                     shell_words::join(self_update_cli_cmd.to_cli_args()).yellow()
                 );
             }
-        }
-    };
+        };
 
     cli_cmd.map(|_| ())
 }
