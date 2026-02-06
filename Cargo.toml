@@ -8,7 +8,6 @@ authors = [
 ]
 license = "MIT OR Apache-2.0"
 edition = "2024"
-resolver = "3"
 repository = "https://github.com/near-cli-rs/near-validator-cli-rs"
 description = "near-validator is your human-friendly companion that helps to interact with NEAR Validators from command line."
 
